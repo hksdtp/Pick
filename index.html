@@ -1,0 +1,4188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pickleball Incanto Club Manager</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* Facebook-style CSS Variables */
+        :root {
+            --facebook-blue: #1877F2;
+            --facebook-green: #42B883;
+            --facebook-gray: #65676B;
+            --facebook-orange: #ff6b35;
+            --facebook-light-gray: #F0F2F5;
+            --facebook-border: #DADDE1;
+            --facebook-text: #1C1E21;
+            --facebook-secondary-text: #65676B;
+            --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.12);
+            --transition-fast: all 0.2s ease;
+            --transition-normal: all 0.3s ease;
+            --border-radius-normal: 8px;
+            --border-radius-large: 12px;
+        }
+
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--facebook-light-gray);
+            color: var(--facebook-text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container */
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0;
+            padding-bottom: 100px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        /* Cover Photo */
+        .cover-photo {
+            height: 200px;
+            position: relative;
+            margin-bottom: -60px;
+        }
+
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4267B2 0%, #1877F2 100%);
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            padding: 0 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-avatar {
+            margin-bottom: 15px;
+        }
+
+        .avatar-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .avatar-circle i {
+            font-size: 40px;
+            color: var(--facebook-blue);
+        }
+
+        .profile-info {
+            margin-bottom: 20px;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--facebook-text);
+        }
+
+        .profile-stats {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--facebook-secondary-text);
+        }
+
+        .stat-item strong {
+            color: var(--facebook-text);
+            font-weight: 600;
+        }
+
+        .stat-separator {
+            margin: 0 8px;
+            color: var(--facebook-secondary-text);
+        }
+
+
+
+        /* Buttons */
+        .btn {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+            padding: 16px 24px;
+            font-weight: 600;
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--facebook-blue);
+            color: white;
+            box-shadow: var(--shadow-light);
+            border: none;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+            background: #166FE5;
+        }
+
+        .btn-secondary {
+            background: var(--facebook-light-gray);
+            border: 1px solid var(--facebook-border);
+            color: var(--facebook-text);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.96);
+            background: #E4E6EA;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            padding: 0 20px;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            margin-bottom: 0;
+            font-size: 14px;
+            padding: 12px 16px;
+        }
+
+        .btn-like {
+            background: var(--facebook-light-gray);
+            border: 1px solid var(--facebook-border);
+            color: var(--facebook-text);
+        }
+
+        .btn-like:active {
+            transform: scale(0.96);
+            background: #E4E6EA;
+        }
+
+        /* Facebook-style Dock Navigation */
+        .dock {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 320px;
+            background: white;
+            border-radius: var(--border-radius-large);
+            padding: 8px;
+            box-shadow: var(--shadow-medium);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            transition: var(--transition-normal);
+            border: 1px solid var(--facebook-border);
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .dock-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--facebook-blue), var(--facebook-green));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 0 0 2px 2px;
+        }
+
+        .dock-item i {
+            font-size: 24px;
+            color: var(--facebook-secondary-text);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 4px;
+        }
+
+        .dock-item .dock-label {
+            font-size: 10px;
+            color: var(--facebook-secondary-text);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+        }
+
+        .dock-item:hover {
+            background: rgba(24, 119, 242, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .dock-item:hover i {
+            transform: scale(1.1);
+            color: var(--facebook-blue);
+        }
+
+        .dock-item.active {
+            background: rgba(24, 119, 242, 0.1);
+            border-radius: var(--border-radius-normal);
+        }
+
+        .dock-item.active::before {
+            width: 70%;
+        }
+
+        .dock-item.active i {
+            color: var(--facebook-blue);
+            transform: translateY(-2px) scale(1.15);
+            filter: drop-shadow(0 2px 8px rgba(24, 119, 242, 0.3));
+        }
+
+        .dock-item.active .dock-label {
+            color: var(--facebook-blue);
+            font-weight: 600;
+        }
+
+        .dock-item:active {
+            transform: scale(0.95);
+        }
+
+        /* Tab switching animation */
+        .dock-item.switching {
+            animation: tabSwitch 0.4s ease;
+        }
+
+        @keyframes tabSwitch {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+
+
+        /* Pull to Refresh */
+        .pull-indicator {
+            position: fixed;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .pull-indicator.visible {
+            top: 20px;
+        }
+
+        /* Member Selection Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 100vw;
+            margin: 0;
+            background: white;
+            border-radius: 16px 16px 0 0;
+            max-height: 95vh;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Match Result Input Modal */
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3500;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-modal.show {
+            display: flex;
+        }
+
+        .result-modal-content {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-header h3 {
+            margin: 0 0 8px 0;
+            color: var(--facebook-text);
+            font-size: 20px;
+        }
+
+        .result-header p {
+            margin: 0;
+            color: var(--facebook-secondary-text);
+            font-size: 14px;
+        }
+
+        .match-card {
+            background: var(--facebook-light-gray);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .match-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .team-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: var(--facebook-blue);
+            margin-bottom: 4px;
+        }
+
+        .team-players {
+            font-size: 13px;
+            color: var(--facebook-text);
+        }
+
+        .vs-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--facebook-secondary-text);
+            margin: 0 16px;
+        }
+
+        .score-input {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .score-field {
+            width: 60px;
+            height: 50px;
+            border: 2px solid var(--facebook-border);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--facebook-text);
+        }
+
+        .score-field:focus {
+            outline: none;
+            border-color: var(--facebook-blue);
+        }
+
+        .score-separator {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--facebook-secondary-text);
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .result-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .result-btn.primary {
+            background: var(--facebook-green);
+            color: white;
+        }
+
+        .result-btn.primary:active {
+            background: #42a85f;
+            transform: scale(0.96);
+        }
+
+        .result-btn.secondary {
+            background: var(--facebook-light-gray);
+            color: var(--facebook-text);
+        }
+
+        .result-btn.secondary:active {
+            background: var(--facebook-border);
+            transform: scale(0.96);
+        }
+
+        /* Teams Result Modal Buttons */
+        .teams-result-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .teams-result-buttons button {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .teams-result-buttons button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .teams-result-buttons button:active {
+            transform: translateY(0);
+        }
+
+        .teams-result-buttons button i {
+            font-size: 12px;
+        }
+
+        /* Action Buttons Grid */
+        .action-buttons-container {
+            padding: 20px;
+        }
+
+        .action-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border: none;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--facebook-blue), #4267B2);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #42b883, #369870);
+            color: white;
+        }
+
+        .btn-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .btn-icon i {
+            font-size: 24px;
+        }
+
+        .btn-content {
+            flex: 1;
+        }
+
+        .btn-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .btn-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Tab Content with Animations */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            padding-bottom: 100px; /* Space for dock */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: slideInUp 0.3s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Rankings */
+        .ranking-list {
+            margin-top: 20px;
+        }
+
+        /* Rank Section Headers */
+        .rank-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin: 20px 0 8px 0;
+            background: linear-gradient(135deg, var(--facebook-light-gray), #f8f9fa);
+            border-radius: 8px;
+            border-left: 4px solid var(--facebook-blue);
+        }
+
+        .rank-tier-badge {
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rank-tier-badge.challenger {
+            color: #ff4757;
+        }
+
+        .rank-tier-badge.diamond {
+            color: #3742fa;
+        }
+
+        .rank-tier-badge.gold {
+            color: #ffa502;
+        }
+
+        .rank-tier-badge.silver {
+            color: #747d8c;
+        }
+
+        .rank-tier-badge.bronze {
+            color: #a4b0be;
+        }
+
+        .rank-count {
+            font-size: 12px;
+            color: var(--facebook-secondary-text);
+            background: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        /* Ranking Items */
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ranking-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--facebook-border);
+        }
+
+        .ranking-item.rank-challenger::before {
+            background: linear-gradient(180deg, #ff4757, #ff6b7a);
+        }
+
+        .ranking-item.rank-diamond::before {
+            background: linear-gradient(180deg, #3742fa, #5352ed);
+        }
+
+        .ranking-item.rank-gold::before {
+            background: linear-gradient(180deg, #ffa502, #ff9f43);
+        }
+
+        .ranking-item.rank-silver::before {
+            background: linear-gradient(180deg, #747d8c, #a4b0be);
+        }
+
+        .ranking-item.rank-bronze::before {
+            background: linear-gradient(180deg, #a4b0be, #c8d6e5);
+        }
+
+        .ranking-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Avatar with Rank Frame */
+        .ranking-avatar-container {
+            position: relative;
+            margin-right: 16px;
+        }
+
+        .ranking-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+            background: var(--facebook-blue);
+            border: 3px solid transparent;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ranking-avatar.challenger {
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+            border: 3px solid #ff4757;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+            animation: challengerGlow 2s ease-in-out infinite alternate;
+        }
+
+        .ranking-avatar.diamond {
+            background: linear-gradient(135deg, #3742fa, #5352ed);
+            border: 3px solid #3742fa;
+            box-shadow: 0 0 15px rgba(55, 66, 250, 0.3);
+        }
+
+        .ranking-avatar.gold {
+            background: linear-gradient(135deg, #ffa502, #ff9f43);
+            border: 3px solid #ffa502;
+            box-shadow: 0 0 15px rgba(255, 165, 2, 0.3);
+        }
+
+        .ranking-avatar.silver {
+            background: linear-gradient(135deg, #747d8c, #a4b0be);
+            border: 3px solid #747d8c;
+        }
+
+        .ranking-avatar.bronze {
+            background: linear-gradient(135deg, #a4b0be, #c8d6e5);
+            border: 3px solid #a4b0be;
+        }
+
+        @keyframes challengerGlow {
+            from { box-shadow: 0 0 20px rgba(255, 71, 87, 0.4); }
+            to { box-shadow: 0 0 30px rgba(255, 71, 87, 0.8); }
+        }
+
+        .rank-crown {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 3;
+            border: 2px solid white;
+        }
+
+        .rank-crown.challenger {
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+        }
+
+        .rank-crown.diamond {
+            background: linear-gradient(135deg, #3742fa, #5352ed);
+        }
+
+        .rank-crown.gold {
+            background: linear-gradient(135deg, #ffa502, #ff9f43);
+        }
+
+        .rank-crown.silver {
+            background: linear-gradient(135deg, #747d8c, #a4b0be);
+        }
+
+        .rank-crown.bronze {
+            background: linear-gradient(135deg, #a4b0be, #c8d6e5);
+        }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-name {
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .ranking-stats {
+            font-size: 13px;
+            color: var(--facebook-secondary-text);
+        }
+
+        .ranking-rank {
+            text-align: right;
+        }
+
+        .rank-badge {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            border: 1px solid transparent;
+        }
+
+        .rank-badge.challenger {
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+            color: white;
+            border-color: #ff4757;
+        }
+
+        .rank-badge.diamond {
+            background: linear-gradient(135deg, #3742fa, #5352ed);
+            color: white;
+            border-color: #3742fa;
+        }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #ffa502, #ff9f43);
+            color: white;
+            border-color: #ffa502;
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #747d8c, #a4b0be);
+            color: white;
+            border-color: #747d8c;
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #a4b0be, #c8d6e5);
+            color: white;
+            border-color: #a4b0be;
+        }
+
+        /* History */
+        .history-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .match-date {
+            font-size: 13px;
+            color: var(--facebook-secondary-text);
+        }
+
+        .match-score {
+            font-weight: bold;
+            color: var(--facebook-text);
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team.winner {
+            color: var(--facebook-green);
+            font-weight: 600;
+        }
+
+        .team.loser {
+            color: var(--facebook-secondary-text);
+        }
+
+        /* Expenses */
+        .expense-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+
+        .expense-cards {
+            display: grid;
+            gap: 16px;
+        }
+
+        .expense-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .expense-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .expense-card.court-fee {
+            border-left: 4px solid #ff6b35;
+        }
+
+        .expense-card.misc-fee {
+            border-left: 4px solid #3742fa;
+        }
+
+        .expense-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .court-fee .expense-icon {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+        }
+
+        .misc-fee .expense-icon {
+            background: linear-gradient(135deg, #3742fa, #5352ed);
+        }
+
+        .expense-info {
+            flex: 1;
+        }
+
+        .expense-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 4px;
+        }
+
+        .expense-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-bottom: 4px;
+        }
+
+        .expense-note {
+            font-size: 13px;
+            color: var(--facebook-secondary-text);
+        }
+
+        /* Rewards */
+        .reward-cards {
+            display: grid;
+            gap: 16px;
+        }
+
+        .reward-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .reward-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .reward-card.current-fund {
+            border-left: 4px solid #27ae60;
+        }
+
+        .reward-card.penalty-fund {
+            border-left: 4px solid #f39c12;
+        }
+
+        .reward-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 12px;
+        }
+
+        .reward-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60;
+            margin-bottom: 12px;
+        }
+
+        .reward-progress {
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--facebook-secondary-text);
+            text-align: center;
+        }
+
+        .reward-description {
+            font-size: 14px;
+            color: var(--facebook-text);
+            margin-bottom: 8px;
+        }
+
+        .reward-target {
+            font-size: 14px;
+            color: #f39c12;
+            font-weight: 600;
+        }
+
+        /* Reward Progress Bar */
+        .reward-progress {
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            animation: progressPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes progressPulse {
+            from { opacity: 0.8; }
+            to { opacity: 1; }
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--facebook-secondary-text);
+            text-align: center;
+        }
+
+        /* Milestone Card */
+        .milestone-card {
+            border-left: 4px solid #e74c3c;
+            background: linear-gradient(135deg, #fff, #fdf2f2);
+        }
+
+        .milestone-reward {
+            text-align: center;
+            padding: 16px 0;
+        }
+
+        .reward-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .reward-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-bottom: 4px;
+        }
+
+        .reward-subtitle {
+            font-size: 12px;
+            color: var(--facebook-secondary-text);
+        }
+
+        .remaining-amount {
+            text-align: center;
+            font-size: 14px;
+            color: #e74c3c;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        /* Penalty Management */
+        .penalty-rule {
+            font-size: 14px;
+            color: var(--facebook-text);
+            margin-bottom: 16px;
+            text-align: center;
+            padding: 8px;
+            background: rgba(241, 196, 15, 0.1);
+            border-radius: 6px;
+        }
+
+        .penalties-section {
+            margin-top: 16px;
+        }
+
+        .penalties-header {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--facebook-border);
+        }
+
+        .penalties-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .penalty-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .penalty-item:last-child {
+            border-bottom: none;
+        }
+
+        .penalty-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .penalty-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .penalty-player {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .penalty-player.unpaid {
+            color: #e74c3c;
+        }
+
+        .penalty-player.paid {
+            color: #27ae60;
+            text-decoration: line-through;
+        }
+
+        .penalty-amount {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .penalty-amount.unpaid {
+            color: #e74c3c;
+        }
+
+        .penalty-amount.paid {
+            color: #27ae60;
+        }
+
+        .no-penalties {
+            text-align: center;
+            color: var(--facebook-secondary-text);
+            font-style: italic;
+            padding: 20px;
+        }
+
+        /* Admin Reset Easter Egg */
+        #expenseTitle {
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        #expenseTitle:hover {
+            color: #ff4757 !important;
+            transform: scale(1.02);
+        }
+
+        /* Edit Expense Modal */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--facebook-border);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--facebook-blue);
+            box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .expense-card {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .expense-card:hover::after {
+            content: '✏️ Nhấn để chỉnh sửa';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--facebook-border);
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            min-height: 60px;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin: 0;
+            flex: 1;
+            text-align: center;
+        }
+
+        .back-btn, .search-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--facebook-light-gray);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--facebook-text);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .back-btn:active, .search-btn:active {
+            background: var(--facebook-border);
+            transform: scale(0.9);
+        }
+
+        /* Member List - Grid Layout for Mobile */
+        .member-list {
+            padding: 12px;
+            max-height: calc(90vh - 73px);
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .member-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 8px;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid var(--facebook-border);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-align: center;
+            min-height: 140px;
+            position: relative;
+        }
+
+        .member-item:active {
+            transform: scale(0.95);
+        }
+
+        .member-item.selected {
+            border-color: var(--facebook-green);
+            background: #f0f9ff;
+        }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--facebook-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .member-item.selected .member-avatar {
+            background: var(--facebook-green);
+        }
+
+        .member-info {
+            flex: 1;
+            width: 100%;
+        }
+
+        .member-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .member-stats {
+            font-size: 11px;
+            color: var(--facebook-secondary-text);
+            line-height: 1.3;
+        }
+
+        .member-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .member-item.selected .member-status {
+            background: var(--facebook-green);
+            color: white;
+        }
+
+        .member-item:not(.selected) .member-status {
+            background: var(--facebook-light-gray);
+            color: var(--facebook-secondary-text);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 360px) {
+            .member-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                padding: 8px;
+            }
+
+            .member-item {
+                padding: 12px 6px;
+                min-height: 120px;
+            }
+
+            .member-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+
+            .member-name {
+                font-size: 13px;
+            }
+
+            .member-stats {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    
+    <!-- Pull to Refresh Indicator -->
+    <div class="pull-indicator" id="pullIndicator">
+        <i class="fas fa-arrow-down"></i> Kéo để làm mới
+    </div>
+    
+    <div class="container">
+        <!-- Cover Photo -->
+        <div class="cover-photo">
+            <div class="cover-image"></div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <div class="profile-avatar">
+                <div class="avatar-circle">
+                    <i class="fas fa-table-tennis"></i>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name">Pickleball Incanto</h1>
+
+                <!-- Stats -->
+                <div class="profile-stats">
+                    <span class="stat-item">
+                        <strong id="total-matches">0</strong> Tổng Trận
+                    </span>
+                    <span class="stat-separator">•</span>
+                    <span class="stat-item">
+                        <strong id="total-members">10</strong> Thành Viên
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-container" id="scheduleContent">
+            <div class="action-buttons-grid">
+                <button class="action-btn primary" onclick="openMemberSelector()">
+                    <div class="btn-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="btn-content">
+                        <div class="btn-title">Chọn Thành Viên</div>
+                        <div class="btn-subtitle">Chọn người chơi hôm nay</div>
+                    </div>
+                </button>
+
+                <button class="action-btn secondary" onclick="generateTeams()">
+                    <div class="btn-icon">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <div class="btn-content">
+                        <div class="btn-title">Xếp Đội Tự Động</div>
+                        <div class="btn-subtitle">Tạo đội cân bằng</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rankings Content -->
+        <div id="rankingsContent" class="tab-content" style="display: none;">
+            <h2 style="text-align: center; color: var(--facebook-text); margin-bottom: 20px;">Bảng Xếp Hạng</h2>
+
+            <div id="rankingList" class="ranking-list">
+                <!-- Rankings will be loaded here -->
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="loadRankings()">
+                    <i class="fas fa-sync-alt"></i>
+                    Làm mới
+                </button>
+            </div>
+        </div>
+
+        <!-- History Content -->
+        <div id="historyContent" class="tab-content" style="display: none;">
+            <h2 style="text-align: center; color: var(--facebook-text); margin-bottom: 20px;">Lịch Sử Trận Đấu</h2>
+
+            <div id="historyList" class="history-list">
+                <!-- History will be loaded here -->
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="loadMatchHistory()">
+                    <i class="fas fa-sync-alt"></i>
+                    Làm mới
+                </button>
+            </div>
+        </div>
+
+        <!-- Expenses Content -->
+        <div id="expensesContent" class="tab-content" style="display: none;">
+            <h2 id="expenseTitle" style="text-align: center; color: var(--facebook-text); margin-bottom: 20px;">Chi Phí Câu Lạc Bộ</h2>
+
+            <!-- Monthly Expenses Section -->
+            <div class="expense-section">
+                <h3 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Chi Phí Tháng Này
+                </h3>
+                <div class="expense-cards" id="expenseCards">
+                    <!-- Expense cards will be loaded from database -->
+                </div>
+            </div>
+
+            <!-- Rewards Section -->
+            <div class="expense-section">
+                <h3 class="section-title">
+                    <i class="fas fa-trophy"></i>
+                    Phân Thưởng
+                </h3>
+
+                <div class="reward-cards">
+                    <!-- Current Fund Card -->
+                    <div class="reward-card current-fund">
+                        <div class="reward-header">
+                            <i class="fas fa-piggy-bank"></i>
+                            <span>Quỹ Hiện Tại</span>
+                        </div>
+                        <div class="reward-amount" id="currentFundAmount">2.000.000 VNĐ</div>
+                        <div class="reward-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="fundProgressBar" style="width: 40%;"></div>
+                            </div>
+                            <div class="progress-text" id="fundProgressText">40% / 5.000.000 VNĐ</div>
+                        </div>
+                    </div>
+
+                    <!-- Reward Milestone Card -->
+                    <div class="reward-card milestone-card">
+                        <div class="reward-header">
+                            <i class="fas fa-trophy"></i>
+                            <span>Phần Thưởng</span>
+                        </div>
+                        <div class="milestone-reward">
+                            <div class="reward-icon">🦞</div>
+                            <div class="reward-title">Đi ăn Lẩu Hải sản</div>
+                            <div class="reward-subtitle">Khi đạt 5.000.000 VNĐ</div>
+                        </div>
+                        <div class="remaining-amount" id="remainingAmount">Còn thiếu: 3.000.000 VNĐ</div>
+                    </div>
+
+                    <!-- Penalty Management Card -->
+                    <div class="reward-card penalty-fund">
+                        <div class="reward-header">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <span>Quỹ Phạt Trận Thua</span>
+                        </div>
+                        <div class="penalty-rule">
+                            Ai thua trận đóng <strong>50.000 VNĐ</strong> vào quỹ
+                        </div>
+
+                        <!-- Unpaid Penalties List -->
+                        <div class="penalties-section">
+                            <div class="penalties-header">
+                                <span>Danh sách chưa thanh toán:</span>
+                            </div>
+                            <div class="penalties-list" id="penaltiesList">
+                                <!-- Penalties will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Match Result Input Modal -->
+    <div id="resultModal" class="result-modal">
+        <div class="result-modal-content">
+            <div class="result-header">
+                <h3>🏓 Nhập Kết Quả Trận Đấu</h3>
+                <p>Nhập điểm số cho từng trận đấu</p>
+            </div>
+            <div id="matchResults">
+                <!-- Match cards will be inserted here -->
+            </div>
+            <div class="result-actions">
+                <button class="result-btn secondary" onclick="closeResultModal()">Hủy</button>
+                <button class="result-btn primary" onclick="submitMatchResults()">Lưu kết quả</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Expense Modal -->
+    <div id="editExpenseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="back-btn" onclick="closeEditExpenseModal()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Chỉnh Sửa Chi Phí</h2>
+                <div></div>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tiêu đề:</label>
+                    <input type="text" id="editExpenseTitle" class="form-input" placeholder="Nhập tiêu đề chi phí">
+                </div>
+
+                <div class="form-group">
+                    <label>Số tiền (VNĐ):</label>
+                    <input type="number" id="editExpenseAmount" class="form-input" placeholder="Nhập số tiền">
+                </div>
+
+                <div class="form-group">
+                    <label>Mô tả:</label>
+                    <input type="text" id="editExpenseDescription" class="form-input" placeholder="Nhập mô tả">
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeEditExpenseModal()">Hủy</button>
+                    <button class="btn btn-primary" onclick="saveExpenseChanges()">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dock Navigation -->
+    <div class="dock">
+        <div class="dock-item active" onclick="switchTab('schedule')" data-tab="schedule">
+            <i class="fas fa-play-circle"></i>
+            <span class="dock-label">Chơi</span>
+        </div>
+        <div class="dock-item" onclick="switchTab('rankings')" data-tab="rankings">
+            <i class="fas fa-crown"></i>
+            <span class="dock-label">Xếp hạng</span>
+        </div>
+        <div class="dock-item" onclick="switchTab('history')" data-tab="history">
+            <i class="fas fa-chart-line"></i>
+            <span class="dock-label">Lịch sử</span>
+        </div>
+        <div class="dock-item" onclick="switchTab('expenses')" data-tab="expenses">
+            <i class="fas fa-coins"></i>
+            <span class="dock-label">Chi phí</span>
+        </div>
+    </div>
+
+    <!-- Member Selection Modal -->
+    <div id="memberModal" class="modal">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <button class="back-btn" onclick="closeMemberSelector()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Thành Viên</h2>
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Member List -->
+            <div class="member-list" id="memberList">
+                <!-- Members will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://sevuymqauqrvsszyukbn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldnV5bXFhdXFydnNzenl1a2JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4NDA1ODUsImV4cCI6MjA2ODQxNjU4NX0.h4-prQMzNVlNJM5GuMGgIwR0PJTu6A-74Sk0Ysl0jk0';
+
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Global variables
+        let players = []; // Will be loaded from database
+        let selectedMembers = [];
+        let currentTab = 'schedule';
+        let teamCombinations = [];
+        let opponentCombinations = [];
+
+        // Database functions
+        async function loadPlayersFromDB() {
+            try {
+                const { data, error } = await supabase
+                    .from('players')
+                    .select('*')
+                    .order('name');
+
+                if (error) throw error;
+
+                players = data || [];
+                console.log('Loaded players from database:', players);
+
+                if (players.length > 0) {
+                    showNotification('Tải dữ liệu thành công', 'success');
+                    updateMemberCount();
+                    return players;
+                } else {
+                    throw new Error('Database trống - không có thành viên nào');
+                }
+
+            } catch (error) {
+                console.error('Database connection error:', error);
+                showNotification('Tải dữ liệu thất bại: ' + error.message, 'error');
+                players = [];
+                updateMemberCount();
+                throw error;
+            }
+        }
+
+        async function loadTeamCombinations() {
+            try {
+                const { data, error } = await supabase
+                    .from('team_combinations')
+                    .select('*');
+
+                if (error) throw error;
+                teamCombinations = data || [];
+                console.log('Loaded team combinations from database:', teamCombinations.length, 'records');
+                return teamCombinations;
+            } catch (error) {
+                console.error('Error loading team combinations:', error);
+                teamCombinations = [];
+                return [];
+            }
+        }
+
+        async function loadOpponentCombinations() {
+            try {
+                const { data, error } = await supabase
+                    .from('opponent_combinations')
+                    .select('*');
+
+                if (error) throw error;
+                opponentCombinations = data || [];
+                console.log('Loaded opponent combinations from database:', opponentCombinations.length, 'records');
+                return opponentCombinations;
+            } catch (error) {
+                console.error('Error loading opponent combinations:', error);
+                opponentCombinations = [];
+                return [];
+            }
+        }
+
+        function updateMemberCount() {
+            const totalMembersElement = document.getElementById('total-members');
+            if (totalMembersElement) {
+                totalMembersElement.textContent = players.length;
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Load data from database
+                await Promise.all([
+                    loadPlayersFromDB(),
+                    loadTeamCombinations(),
+                    loadOpponentCombinations()
+                ]);
+            } catch (error) {
+                // Show error message and disable functionality
+                showNotification('Tải dữ liệu thất bại. Vui lòng kiểm tra kết nối mạng.', 'error');
+
+                // Disable buttons
+                const buttons = document.querySelectorAll('.btn');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                });
+            }
+
+            // Close modal when clicking outside
+            document.getElementById('memberModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeMemberSelector();
+                }
+            });
+
+            // Close result modal when clicking outside
+            document.getElementById('resultModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeResultModal();
+                }
+            });
+
+            // Initialize pull to refresh
+            initializePullToRefresh();
+        });
+
+        // Tab switching with animations
+        function switchTab(tabName) {
+            if (currentTab === tabName) return;
+
+            // Add switching animation to clicked tab
+            const clickedItem = document.querySelector(`[data-tab="${tabName}"]`);
+            if (clickedItem) {
+                clickedItem.classList.add('switching');
+                setTimeout(() => {
+                    clickedItem.classList.remove('switching');
+                }, 400);
+            }
+
+            // Fade out current content
+            const currentContent = getCurrentContentElement();
+            if (currentContent) {
+                currentContent.style.opacity = '0';
+                currentContent.style.transform = 'translateY(-20px)';
+
+                setTimeout(() => {
+                    // Hide all content
+                    document.getElementById('scheduleContent').style.display = 'none';
+                    document.getElementById('rankingsContent').style.display = 'none';
+                    document.getElementById('historyContent').style.display = 'none';
+                    document.getElementById('expensesContent').style.display = 'none';
+
+                    // Show selected content and load data
+                    let newContent;
+                    if (tabName === 'schedule') {
+                        newContent = document.getElementById('scheduleContent');
+                        newContent.style.display = 'block';
+                    } else if (tabName === 'rankings') {
+                        newContent = document.getElementById('rankingsContent');
+                        newContent.style.display = 'block';
+                        loadRankings();
+                    } else if (tabName === 'history') {
+                        newContent = document.getElementById('historyContent');
+                        newContent.style.display = 'block';
+                        loadMatchHistory();
+                    } else if (tabName === 'expenses') {
+                        newContent = document.getElementById('expensesContent');
+                        newContent.style.display = 'block';
+                        // Load expenses and penalty data
+                        loadExpenses();
+                        loadPenalties();
+                        loadFundStatus();
+                        // Setup admin reset easter egg
+                        setupExpenseTabClickHandler();
+                    }
+
+                    // Animate in new content
+                    if (newContent) {
+                        newContent.style.opacity = '0';
+                        newContent.style.transform = 'translateY(20px)';
+
+                        setTimeout(() => {
+                            newContent.style.opacity = '1';
+                            newContent.style.transform = 'translateY(0)';
+                        }, 50);
+                    }
+                }, 150);
+            } else {
+                // First load - no animation needed
+                showTabContent(tabName);
+            }
+
+            // Update dock active state
+            document.querySelectorAll('.dock-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            if (clickedItem) {
+                clickedItem.classList.add('active');
+            }
+
+            // Add haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate([10, 5, 10]);
+            }
+
+            currentTab = tabName;
+        }
+
+        function getCurrentContentElement() {
+            if (currentTab === 'schedule') return document.getElementById('scheduleContent');
+            if (currentTab === 'rankings') return document.getElementById('rankingsContent');
+            if (currentTab === 'history') return document.getElementById('historyContent');
+            if (currentTab === 'expenses') return document.getElementById('expensesContent');
+            return null;
+        }
+
+        function showTabContent(tabName) {
+            // Hide all content
+            document.getElementById('scheduleContent').style.display = 'none';
+            document.getElementById('rankingsContent').style.display = 'none';
+            document.getElementById('historyContent').style.display = 'none';
+            document.getElementById('expensesContent').style.display = 'none';
+
+            // Show selected content
+            if (tabName === 'schedule') {
+                document.getElementById('scheduleContent').style.display = 'block';
+            } else if (tabName === 'rankings') {
+                document.getElementById('rankingsContent').style.display = 'block';
+                loadRankings();
+            } else if (tabName === 'history') {
+                document.getElementById('historyContent').style.display = 'block';
+                loadMatchHistory();
+            } else if (tabName === 'expenses') {
+                document.getElementById('expensesContent').style.display = 'block';
+                // Load expenses and penalty data
+                loadExpenses();
+                loadPenalties();
+                loadFundStatus();
+                // Setup admin reset easter egg
+                setupExpenseTabClickHandler();
+            }
+        }
+
+        // Member selector
+        function openMemberSelector() {
+            const modal = document.getElementById('memberModal');
+            modal.classList.add('show');
+            renderMemberList();
+        }
+
+        function closeMemberSelector() {
+            const modal = document.getElementById('memberModal');
+            modal.classList.remove('show');
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(word => word[0]).join('').toUpperCase();
+        }
+
+        function renderMemberList() {
+            const memberList = document.getElementById('memberList');
+
+            memberList.innerHTML = '';
+
+            if (players.length === 0) {
+                memberList.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--facebook-secondary-text);">❌ Không có dữ liệu thành viên</div>';
+                return;
+            }
+
+            players.forEach(player => {
+                const isSelected = selectedMembers.includes(player.name);
+                const memberItem = document.createElement('div');
+                memberItem.className = `member-item ${isSelected ? 'selected' : ''}`;
+
+                // Calculate rank display
+                const rankName = getRankName(player.rank_points);
+                const winRate = player.matches > 0 ? Math.round((player.wins / player.matches) * 100) : 0;
+
+                memberItem.innerHTML = `
+                    <div class="member-status">${isSelected ? '✓' : ''}</div>
+                    <div class="member-avatar">${getInitials(player.name)}</div>
+                    <div class="member-info">
+                        <div class="member-name">${player.name}</div>
+                        <div class="member-stats">
+                            ${rankName}<br>${player.rank_points} Điểm • ${winRate}%
+                        </div>
+                    </div>
+                `;
+
+                // Add click handler to toggle selection
+                memberItem.addEventListener('click', () => {
+                    if (isSelected) {
+                        removeMember(player.name);
+                    } else {
+                        addMember(player.name);
+                    }
+                });
+
+                memberList.appendChild(memberItem);
+            });
+        }
+
+        function getRankName(rankPoints) {
+            if (rankPoints >= 120) return 'Thách Đấu';
+            if (rankPoints >= 90) return 'Kim Cương';
+            if (rankPoints >= 60) return 'Vàng';
+            if (rankPoints >= 30) return 'Bạc';
+            return 'Đồng';
+        }
+
+        function addMember(memberName) {
+            if (!selectedMembers.includes(memberName)) {
+                selectedMembers.push(memberName);
+                renderMemberList();
+                showNotification(`Đã thêm ${memberName}`, 'success');
+            }
+        }
+
+        function removeMember(memberName) {
+            selectedMembers = selectedMembers.filter(name => name !== memberName);
+            renderMemberList();
+            showNotification(`Đã bỏ chọn ${memberName}`, 'info');
+        }
+
+        // Advanced Team Generation with Skill Balancing
+        async function generateTeams() {
+            if (selectedMembers.length < 4) {
+                showNotification('Cần ít nhất 4 thành viên để tạo đội', 'warning');
+                return;
+            }
+
+            showNotification('Đang tính toán đội tối ưu...', 'info');
+
+            try {
+                // Get selected players data
+                const selectedPlayers = players.filter(p => selectedMembers.includes(p.name));
+
+                // Generate optimal teams
+                const optimalTeams = await generateOptimalTeams(selectedPlayers);
+
+                // Display teams with detailed info
+                showAdvancedTeamsResult(optimalTeams);
+
+            } catch (error) {
+                console.error('Error generating teams:', error);
+                showNotification('Lỗi tạo đội, sử dụng phương pháp đơn giản', 'warning');
+
+                // Fallback to simple method
+                const shuffled = [...selectedMembers].sort(() => Math.random() - 0.5);
+                const teams = [];
+                for (let i = 0; i < shuffled.length; i += 2) {
+                    if (i + 1 < shuffled.length) {
+                        teams.push([shuffled[i], shuffled[i + 1]]);
+                    }
+                }
+                showTeamsResult(teams);
+            }
+        }
+
+        async function generateOptimalTeams(selectedPlayers) {
+            // Step 1: Generate all possible team combinations
+            const allCombinations = generateAllTeamCombinations(selectedPlayers);
+
+            if (allCombinations.length === 0) {
+                // Fallback: simple pairing
+                const teams = [];
+                for (let i = 0; i < selectedPlayers.length; i += 2) {
+                    if (i + 1 < selectedPlayers.length) {
+                        teams.push([selectedPlayers[i], selectedPlayers[i + 1]]);
+                    }
+                }
+                return teams;
+            }
+
+            // Step 2: Score each combination
+            const scoredCombinations = await Promise.all(
+                allCombinations.map(async combination => ({
+                    teams: combination,
+                    score: await calculateCombinationScore(combination)
+                }))
+            );
+
+            // Step 3: Sort by score (higher is better)
+            scoredCombinations.sort((a, b) => b.score - a.score);
+
+            // Step 4: Return best combination
+            if (scoredCombinations.length > 0) {
+                return scoredCombinations[0].teams;
+            } else {
+                // Fallback: simple pairing
+                const teams = [];
+                for (let i = 0; i < selectedPlayers.length; i += 2) {
+                    if (i + 1 < selectedPlayers.length) {
+                        teams.push([selectedPlayers[i], selectedPlayers[i + 1]]);
+                    }
+                }
+                return teams;
+            }
+        }
+
+        function generateAllTeamCombinations(players) {
+            if (players.length < 4) return [];
+
+            const combinations = [];
+
+            // For 4 players: generate all possible pairings
+            if (players.length === 4) {
+                // 3 possible ways to pair 4 players
+                combinations.push([[players[0], players[1]], [players[2], players[3]]]);
+                combinations.push([[players[0], players[2]], [players[1], players[3]]]);
+                combinations.push([[players[0], players[3]], [players[1], players[2]]]);
+                return combinations;
+            }
+
+            // For 6 players: generate some good combinations
+            if (players.length === 6) {
+                // Generate a few good combinations (not all to avoid complexity)
+                for (let i = 0; i < Math.min(10, players.length); i++) {
+                    const shuffled = [...players].sort(() => Math.random() - 0.5);
+                    combinations.push([
+                        [shuffled[0], shuffled[1]],
+                        [shuffled[2], shuffled[3]],
+                        [shuffled[4], shuffled[5]]
+                    ]);
+                }
+                return combinations;
+            }
+
+            // For 8 players: generate some good combinations
+            if (players.length === 8) {
+                for (let i = 0; i < Math.min(15, players.length); i++) {
+                    const shuffled = [...players].sort(() => Math.random() - 0.5);
+                    combinations.push([
+                        [shuffled[0], shuffled[1]],
+                        [shuffled[2], shuffled[3]],
+                        [shuffled[4], shuffled[5]],
+                        [shuffled[6], shuffled[7]]
+                    ]);
+                }
+                return combinations;
+            }
+
+            // For other numbers: simple pairing
+            for (let i = 0; i < Math.min(20, players.length); i++) {
+                const shuffled = [...players].sort(() => Math.random() - 0.5);
+                const teams = [];
+                for (let j = 0; j < shuffled.length; j += 2) {
+                    if (j + 1 < shuffled.length) {
+                        teams.push([shuffled[j], shuffled[j + 1]]);
+                    }
+                }
+                if (teams.length > 0) {
+                    combinations.push(teams);
+                }
+            }
+
+            return combinations;
+        }
+
+        async function calculateCombinationScore(teams) {
+            let totalScore = 0;
+
+            // Factor 1: Skill Balance (40% weight)
+            const skillBalanceScore = calculateSkillBalance(teams) * 0.4;
+
+            // Factor 2: Team Combination Diversity (30% weight)
+            const teamDiversityScore = await calculateTeamDiversity(teams) * 0.3;
+
+            // Factor 3: Opponent Diversity (30% weight)
+            const opponentDiversityScore = await calculateOpponentDiversity(teams) * 0.3;
+
+            totalScore = skillBalanceScore + teamDiversityScore + opponentDiversityScore;
+
+            return totalScore;
+        }
+
+        function calculateSkillBalance(teams) {
+            // Calculate team strengths
+            const teamStrengths = teams.map(team => {
+                return team.reduce((sum, player) => sum + (player.rank_points || 0), 0);
+            });
+
+            // Calculate variance (lower variance = better balance)
+            const avgStrength = teamStrengths.reduce((sum, strength) => sum + strength, 0) / teamStrengths.length;
+            const variance = teamStrengths.reduce((sum, strength) => sum + Math.pow(strength - avgStrength, 2), 0) / teamStrengths.length;
+
+            // Convert to score (lower variance = higher score)
+            const maxVariance = 10000; // Adjust based on your data
+            return Math.max(0, (maxVariance - variance) / maxVariance * 100);
+        }
+
+        async function calculateTeamDiversity(teams) {
+            let diversityScore = 100; // Start with max score
+
+            for (const team of teams) {
+                if (team.length === 2) {
+                    const teamKey = getTeamKey(team[0].player_id, team[1].player_id);
+                    const combination = teamCombinations.find(tc => tc.team_key === teamKey);
+
+                    if (combination) {
+                        // Penalize frequently used combinations
+                        const penalty = Math.min(combination.combination_count * 10, 50);
+                        diversityScore -= penalty;
+                    }
+                }
+            }
+
+            return Math.max(0, diversityScore);
+        }
+
+        async function calculateOpponentDiversity(teams) {
+            let diversityScore = 100; // Start with max score
+
+            // Check all possible opponent matchups
+            for (let i = 0; i < teams.length; i++) {
+                for (let j = i + 1; j < teams.length; j++) {
+                    const team1 = teams[i];
+                    const team2 = teams[j];
+
+                    // Check how often these teams have faced each other
+                    for (const p1 of team1) {
+                        for (const p2 of team2) {
+                            const opponentKey = getOpponentKey(p1.player_id, p2.player_id);
+                            const combination = opponentCombinations.find(oc => oc.opponent_key === opponentKey);
+
+                            if (combination) {
+                                // Penalize frequently matched opponents
+                                const penalty = Math.min(combination.match_count * 5, 25);
+                                diversityScore -= penalty;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return Math.max(0, diversityScore);
+        }
+
+        function getTeamKey(playerId1, playerId2) {
+            // Always put smaller ID first for consistency
+            const ids = [playerId1, playerId2].sort((a, b) => a - b);
+            return `${ids[0]}-${ids[1]}`;
+        }
+
+        function getOpponentKey(playerId1, playerId2) {
+            // Always put smaller ID first for consistency
+            const ids = [playerId1, playerId2].sort((a, b) => a - b);
+            return `${ids[0]}-${ids[1]}`;
+        }
+
+        function assignCourts(teams) {
+            const courts = [
+                { id: 1, match: null },
+                { id: 2, match: null }
+            ];
+
+            if (teams.length < 2) {
+                return courts;
+            }
+
+            // Create all possible matches
+            const possibleMatches = [];
+            for (let i = 0; i < teams.length; i++) {
+                for (let j = i + 1; j < teams.length; j++) {
+                    const team1 = teams[i];
+                    const team2 = teams[j];
+
+                    // Calculate match quality score
+                    const team1Strength = team1.reduce((sum, player) => sum + (player.rank_points || 0), 0);
+                    const team2Strength = team2.reduce((sum, player) => sum + (player.rank_points || 0), 0);
+                    const balanceScore = 100 - Math.abs(team1Strength - team2Strength); // Higher is better
+
+                    // Calculate opponent diversity score
+                    let diversityScore = 100;
+                    for (const p1 of team1) {
+                        for (const p2 of team2) {
+                            const opponentKey = getOpponentKey(p1.player_id, p2.player_id);
+                            const combination = opponentCombinations.find(oc => oc.opponent_key === opponentKey);
+                            if (combination) {
+                                diversityScore -= combination.match_count * 5; // Penalize frequent matchups
+                            }
+                        }
+                    }
+
+                    const totalScore = balanceScore * 0.7 + Math.max(0, diversityScore) * 0.3;
+
+                    possibleMatches.push({
+                        team1Index: i,
+                        team2Index: j,
+                        team1: team1,
+                        team2: team2,
+                        score: totalScore,
+                        balanceScore: balanceScore,
+                        diversityScore: diversityScore
+                    });
+                }
+            }
+
+            // Sort matches by quality (best first)
+            possibleMatches.sort((a, b) => b.score - a.score);
+
+            // Assign best matches to courts
+            const usedTeams = new Set();
+            let courtIndex = 0;
+
+            for (const match of possibleMatches) {
+                if (courtIndex >= courts.length) break;
+
+                // Check if teams are already assigned
+                if (!usedTeams.has(match.team1Index) && !usedTeams.has(match.team2Index)) {
+                    courts[courtIndex].match = match;
+                    usedTeams.add(match.team1Index);
+                    usedTeams.add(match.team2Index);
+                    courtIndex++;
+                }
+            }
+
+            return courts;
+        }
+
+        function showAdvancedTeamsResult(teams) {
+            // Automatically assign courts
+            const courtAssignments = assignCourts(teams);
+
+            let teamsHtml = '<div style="padding: 20px; background: white; border-radius: 12px; margin: 20px; box-shadow: var(--shadow-medium); max-height: 80vh; overflow-y: auto;">';
+            teamsHtml += '<h3 style="text-align: center; color: var(--facebook-text); margin-bottom: 20px;">🏓 Đội & Sân Đã Được Sắp Xếp</h3>';
+
+            // Display court assignments
+            courtAssignments.forEach((court, courtIndex) => {
+                teamsHtml += `<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px; border-radius: 12px; margin-bottom: 16px; color: white;">`;
+                teamsHtml += `<h3 style="text-align: center; margin: 0 0 16px 0; font-size: 18px;">🏟️ Sân ${courtIndex + 1}</h3>`;
+
+                if (court.match) {
+                    teamsHtml += `<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">`;
+                    teamsHtml += `<div style="text-align: center; flex: 1;">`;
+                    teamsHtml += `<div style="font-weight: 600; margin-bottom: 8px;">Đội ${court.match.team1Index + 1}</div>`;
+                    court.match.team1.forEach(player => {
+                        const rankName = getRankName(player.rank_points);
+                        teamsHtml += `<div style="font-size: 14px; opacity: 0.9;">${player.name}</div>`;
+                        teamsHtml += `<div style="font-size: 11px; opacity: 0.7;">${rankName} • ${player.rank_points} Điểm</div>`;
+                    });
+                    teamsHtml += `</div>`;
+
+                    teamsHtml += `<div style="font-size: 24px; font-weight: bold; margin: 0 16px;">VS</div>`;
+
+                    teamsHtml += `<div style="text-align: center; flex: 1;">`;
+                    teamsHtml += `<div style="font-weight: 600; margin-bottom: 8px;">Đội ${court.match.team2Index + 1}</div>`;
+                    court.match.team2.forEach(player => {
+                        const rankName = getRankName(player.rank_points);
+                        teamsHtml += `<div style="font-size: 14px; opacity: 0.9;">${player.name}</div>`;
+                        teamsHtml += `<div style="font-size: 11px; opacity: 0.7;">${rankName} • ${player.rank_points} Điểm</div>`;
+                    });
+                    teamsHtml += `</div>`;
+                    teamsHtml += `</div>`;
+
+                    // Show team balance
+                    const team1Strength = court.match.team1.reduce((sum, player) => sum + (player.rank_points || 0), 0);
+                    const team2Strength = court.match.team2.reduce((sum, player) => sum + (player.rank_points || 0), 0);
+                    const balanceText = Math.abs(team1Strength - team2Strength) <= 10 ? '⚖️ Cân bằng' : '⚠️ Chênh lệch';
+
+                    teamsHtml += `<div style="text-align: center; font-size: 12px; opacity: 0.8; margin-top: 8px;">`;
+                    teamsHtml += `${team1Strength} Điểm vs ${team2Strength} Điểm • ${balanceText}`;
+                    teamsHtml += `</div>`;
+                } else {
+                    teamsHtml += `<div style="text-align: center; opacity: 0.7;">Sân trống</div>`;
+                }
+
+                teamsHtml += `</div>`;
+            });
+
+            // Show waiting teams if any
+            const waitingTeams = teams.filter((_, index) => !courtAssignments.some(court =>
+                court.match && (court.match.team1Index === index || court.match.team2Index === index)
+            ));
+
+            if (waitingTeams.length > 0) {
+                teamsHtml += `<div style="background: var(--facebook-light-gray); padding: 16px; border-radius: 12px; margin-bottom: 16px;">`;
+                teamsHtml += `<h4 style="color: var(--facebook-text); margin: 0 0 12px 0; text-align: center;">⏳ Đội Chờ</h4>`;
+                waitingTeams.forEach((team, index) => {
+                    const teamIndex = teams.indexOf(team);
+                    const teamStrength = team.reduce((sum, player) => sum + (player.rank_points || 0), 0);
+
+                    teamsHtml += `<div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px;">`;
+                    teamsHtml += `<div style="font-weight: 600; color: var(--facebook-blue); margin-bottom: 4px;">Đội ${teamIndex + 1} (${teamStrength} Điểm)</div>`;
+                    team.forEach(player => {
+                        teamsHtml += `<div style="font-size: 14px; color: var(--facebook-text);">${player.name}</div>`;
+                    });
+                    teamsHtml += `</div>`;
+                });
+                teamsHtml += `</div>`;
+            }
+
+            teamsHtml += '<div style="background: var(--facebook-light-gray); padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center;">';
+            teamsHtml += '<div style="font-size: 12px; color: var(--facebook-secondary-text);">✨ Đội và sân được tối ưu dựa trên skill balance và lịch sử</div>';
+            teamsHtml += '</div>';
+
+            teamsHtml += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">';
+            teamsHtml += '<button onclick="generateTeams()" style="background: var(--facebook-blue); color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i class="fas fa-sync-alt" style="margin-right: 6px;"></i>Tạo lại</button>';
+            teamsHtml += '<button onclick="openMatchResultInput()" style="background: var(--facebook-green); color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i class="fas fa-edit" style="margin-right: 6px;"></i>Nhập kết quả</button>';
+            teamsHtml += '<button onclick="requestPasswordAndSaveHistory()" style="background: var(--facebook-orange); color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i class="fas fa-save" style="margin-right: 6px;"></i>Lưu lịch sử</button>';
+            teamsHtml += '<button onclick="closeTeamsResult()" style="background: var(--facebook-light-gray); color: var(--facebook-text); border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s ease;"><i class="fas fa-times" style="margin-right: 6px;"></i>Đóng</button>';
+            teamsHtml += '</div>';
+            teamsHtml += '</div>';
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'teamsOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 3000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: fadeIn 0.3s ease;
+            `;
+
+            overlay.innerHTML = teamsHtml;
+            document.body.appendChild(overlay);
+
+            // Store current teams and court assignments
+            window.currentTeams = teams;
+            window.currentCourtAssignments = courtAssignments;
+
+            // Close when clicking outside
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    closeTeamsResult();
+                }
+            });
+
+            const totalMatches = courtAssignments.filter(court => court.match).length;
+            showNotification(`Đã sắp xếp ${teams.length} đội vào ${totalMatches} trận đấu`, 'success');
+        }
+
+        function showTeamsResult(teams) {
+            // Fallback simple display
+            showAdvancedTeamsResult(teams.map(team =>
+                team.map(name => players.find(p => p.name === name) || { name, rank_points: 0, elo: 0, matches: 0, wins: 0 })
+            ));
+        }
+
+        // Function to request password and save history
+        async function requestPasswordAndSaveHistory() {
+            const password = prompt('🔒 Nhập mật khẩu để lưu lịch sử đội:');
+            if (password !== '111') {
+                showNotification('❌ Mật khẩu không đúng!', 'error');
+                return;
+            }
+            await saveTeamsToHistory();
+        }
+
+        async function saveTeamsToHistory() {
+            if (!window.currentTeams || !window.currentCourtAssignments) {
+                showNotification('Không có đội nào để lưu', 'warning');
+                return;
+            }
+
+            try {
+                showNotification('Đang lưu lịch sử đội...', 'info');
+
+                // Update team combinations only (not match results)
+                for (const team of window.currentTeams) {
+                    if (team.length === 2) {
+                        await updateTeamCombination(team[0].player_id, team[1].player_id);
+                    }
+                }
+
+                // Update opponent combinations for potential matches
+                for (const court of window.currentCourtAssignments) {
+                    if (court.match) {
+                        const team1 = court.match.team1;
+                        const team2 = court.match.team2;
+
+                        // Update all opponent combinations between the two teams
+                        for (const p1 of team1) {
+                            for (const p2 of team2) {
+                                await updateOpponentCombination(p1.player_id, p2.player_id);
+                            }
+                        }
+                    }
+                }
+
+                // Reload combinations data
+                await loadTeamCombinations();
+                await loadOpponentCombinations();
+
+                showNotification('✅ Đã lưu lịch sử đội để tối ưu lần tạo đội tiếp theo', 'success');
+                closeTeamsResult();
+
+            } catch (error) {
+                console.error('Error saving teams:', error);
+                showNotification('Lỗi lưu lịch sử vào database', 'error');
+                closeTeamsResult();
+            }
+        }
+
+        async function updateTeamCombination(playerId1, playerId2) {
+            const teamKey = getTeamKey(playerId1, playerId2);
+
+            try {
+                // Check if combination exists
+                const { data: existing, error: selectError } = await supabase
+                    .from('team_combinations')
+                    .select('*')
+                    .eq('team_key', teamKey);
+
+                if (selectError) {
+                    console.error('Error checking team combination:', selectError);
+                    return;
+                }
+
+                if (existing && existing.length > 0) {
+                    // Update count
+                    const { error: updateError } = await supabase
+                        .from('team_combinations')
+                        .update({ combination_count: existing[0].combination_count + 1 })
+                        .eq('team_key', teamKey);
+
+                    if (updateError) {
+                        console.error('Error updating team combination:', updateError);
+                    } else {
+                        console.log(`Updated team combination ${teamKey}: ${existing[0].combination_count + 1} times`);
+                    }
+                } else {
+                    // Insert new combination
+                    const { error: insertError } = await supabase
+                        .from('team_combinations')
+                        .insert({
+                            team_key: teamKey,
+                            player1_id: Math.min(playerId1, playerId2),
+                            player2_id: Math.max(playerId1, playerId2),
+                            combination_count: 1
+                        });
+
+                    if (insertError) {
+                        console.error('Error inserting team combination:', insertError);
+                    } else {
+                        console.log(`Created new team combination ${teamKey}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating team combination:', error);
+            }
+        }
+
+        async function updateOpponentCombination(playerId1, playerId2) {
+            const opponentKey = getOpponentKey(playerId1, playerId2);
+
+            try {
+                // Check if combination exists
+                const { data: existing, error: selectError } = await supabase
+                    .from('opponent_combinations')
+                    .select('*')
+                    .eq('opponent_key', opponentKey);
+
+                if (selectError) {
+                    console.error('Error checking opponent combination:', selectError);
+                    return;
+                }
+
+                if (existing && existing.length > 0) {
+                    // Update count
+                    const { error: updateError } = await supabase
+                        .from('opponent_combinations')
+                        .update({ match_count: existing[0].match_count + 1 })
+                        .eq('opponent_key', opponentKey);
+
+                    if (updateError) {
+                        console.error('Error updating opponent combination:', updateError);
+                    } else {
+                        console.log(`Updated opponent combination ${opponentKey}: ${existing[0].match_count + 1} matches`);
+                    }
+                } else {
+                    // Insert new combination
+                    const { error: insertError } = await supabase
+                        .from('opponent_combinations')
+                        .insert({
+                            opponent_key: opponentKey,
+                            player1_id: Math.min(playerId1, playerId2),
+                            player2_id: Math.max(playerId1, playerId2),
+                            match_count: 1
+                        });
+
+                    if (insertError) {
+                        console.error('Error inserting opponent combination:', insertError);
+                    } else {
+                        console.log(`Created new opponent combination ${opponentKey}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating opponent combination:', error);
+            }
+        }
+
+        function closeTeamsResult() {
+            const overlay = document.getElementById('teamsOverlay');
+            if (overlay) {
+                overlay.remove();
+            }
+            window.currentTeams = null;
+            window.currentCourtAssignments = null;
+        }
+
+        // Match Result System
+        function openMatchResultInput() {
+            if (!window.currentCourtAssignments) {
+                showNotification('Không có trận đấu nào để nhập kết quả', 'warning');
+                return;
+            }
+
+            const modal = document.getElementById('resultModal');
+            const matchResults = document.getElementById('matchResults');
+
+            matchResults.innerHTML = '';
+
+            // Create input for each match
+            window.currentCourtAssignments.forEach((court, courtIndex) => {
+                if (court.match) {
+                    const matchCard = document.createElement('div');
+                    matchCard.className = 'match-card';
+
+                    const team1Names = court.match.team1.map(p => p.name).join(' & ');
+                    const team2Names = court.match.team2.map(p => p.name).join(' & ');
+
+                    matchCard.innerHTML = `
+                        <div class="match-teams">
+                            <div class="team-info">
+                                <div class="team-name">Đội ${court.match.team1Index + 1}</div>
+                                <div class="team-players">${team1Names}</div>
+                            </div>
+                            <div class="vs-text">VS</div>
+                            <div class="team-info">
+                                <div class="team-name">Đội ${court.match.team2Index + 1}</div>
+                                <div class="team-players">${team2Names}</div>
+                            </div>
+                        </div>
+                        <div class="score-input">
+                            <input type="number" class="score-field" id="score1_${courtIndex}" min="0" max="21" placeholder="0">
+                            <span class="score-separator">-</span>
+                            <input type="number" class="score-field" id="score2_${courtIndex}" min="0" max="21" placeholder="0">
+                        </div>
+                        <div style="text-align: center; font-size: 12px; color: var(--facebook-secondary-text);">
+                            Sân ${courtIndex + 1} • Nhập điểm từ 0-21
+                        </div>
+                    `;
+
+                    matchResults.appendChild(matchCard);
+                }
+            });
+
+            modal.classList.add('show');
+        }
+
+        function closeResultModal() {
+            const modal = document.getElementById('resultModal');
+            modal.classList.remove('show');
+        }
+
+        async function submitMatchResults() {
+            // Request password for submitting match results
+            const password = prompt('🔒 Nhập mật khẩu để lưu kết quả trận đấu:');
+            if (password !== '111') {
+                showNotification('❌ Mật khẩu không đúng!', 'error');
+                return;
+            }
+
+            try {
+                showNotification('Đang xử lý kết quả...', 'info');
+
+                const matchResults = [];
+                let hasValidResults = false;
+
+                // Collect all match results
+                window.currentCourtAssignments.forEach((court, courtIndex) => {
+                    if (court.match) {
+                        const score1Input = document.getElementById(`score1_${courtIndex}`);
+                        const score2Input = document.getElementById(`score2_${courtIndex}`);
+
+                        const score1 = parseInt(score1Input.value) || 0;
+                        const score2 = parseInt(score2Input.value) || 0;
+
+                        if (score1 > 0 || score2 > 0) {
+                            hasValidResults = true;
+
+                            matchResults.push({
+                                courtIndex: courtIndex,
+                                team1: court.match.team1,
+                                team2: court.match.team2,
+                                team1Index: court.match.team1Index,
+                                team2Index: court.match.team2Index,
+                                score1: score1,
+                                score2: score2,
+                                winner: score1 > score2 ? 'A' : (score2 > score1 ? 'B' : 'DRAW')
+                            });
+                        }
+                    }
+                });
+
+                if (!hasValidResults) {
+                    showNotification('Vui lòng nhập ít nhất một kết quả trận đấu', 'warning');
+                    return;
+                }
+
+                // Process each match result
+                for (const matchResult of matchResults) {
+                    await processMatchResult(matchResult);
+                    // Add penalties for losing players
+                    await addPenaltiesForLosers(matchResult);
+                }
+
+                // Reload player data to reflect changes
+                await loadPlayersFromDB();
+
+                // Auto-refresh all related tabs
+                await refreshRelatedTabs();
+
+                showNotification(`✅ Đã lưu kết quả ${matchResults.length} trận đấu và cập nhật toàn bộ dữ liệu`, 'success');
+                closeResultModal();
+                closeTeamsResult();
+
+            } catch (error) {
+                console.error('Error submitting match results:', error);
+                showNotification('Lỗi xử lý kết quả trận đấu', 'error');
+            }
+        }
+
+        async function processMatchResult(matchResult) {
+            try {
+                // Generate unique match ID (integer only)
+                const matchId = Date.now();
+                const matchDate = new Date().toISOString();
+
+                // Calculate team averages for ELO calculation
+                const team1AvgElo = matchResult.team1.reduce((sum, p) => sum + (p.elo || 1000), 0) / matchResult.team1.length;
+                const team2AvgElo = matchResult.team2.reduce((sum, p) => sum + (p.elo || 1000), 0) / matchResult.team2.length;
+
+                const team1AvgRank = matchResult.team1.reduce((sum, p) => sum + (p.rank_points || 0), 0) / matchResult.team1.length;
+                const team2AvgRank = matchResult.team2.reduce((sum, p) => sum + (p.rank_points || 0), 0) / matchResult.team2.length;
+
+                // Process each player in team 1
+                for (const player of matchResult.team1) {
+                    const isWinner = matchResult.winner === 'A';
+                    const isDraw = matchResult.winner === 'DRAW';
+
+                    await updatePlayerStats(player, {
+                        isWinner: isWinner,
+                        isDraw: isDraw,
+                        opponentAvgElo: team2AvgElo,
+                        opponentAvgRank: team2AvgRank,
+                        scoreFor: matchResult.score1,
+                        scoreAgainst: matchResult.score2
+                    });
+                }
+
+                // Process each player in team 2
+                for (const player of matchResult.team2) {
+                    const isWinner = matchResult.winner === 'B';
+                    const isDraw = matchResult.winner === 'DRAW';
+
+                    await updatePlayerStats(player, {
+                        isWinner: isWinner,
+                        isDraw: isDraw,
+                        opponentAvgElo: team1AvgElo,
+                        opponentAvgRank: team1AvgRank,
+                        scoreFor: matchResult.score2,
+                        scoreAgainst: matchResult.score1
+                    });
+                }
+
+                // Save match history
+                await saveMatchHistory({
+                    matchId: matchId,
+                    matchDate: matchDate,
+                    team1: matchResult.team1,
+                    team2: matchResult.team2,
+                    score1: matchResult.score1,
+                    score2: matchResult.score2,
+                    winner: matchResult.winner
+                });
+
+                console.log(`Processed match result: ${matchResult.score1}-${matchResult.score2}, Winner: ${matchResult.winner}`);
+
+            } catch (error) {
+                console.error('Error processing match result:', error);
+                throw error;
+            }
+        }
+
+        async function updatePlayerStats(player, matchData) {
+            try {
+                const { isWinner, isDraw, opponentAvgElo, opponentAvgRank, scoreFor, scoreAgainst } = matchData;
+
+                // Calculate ELO change
+                const currentElo = player.elo || 1000;
+                const eloChange = calculateELOChange(currentElo, opponentAvgElo, isWinner ? 1 : (isDraw ? 0.5 : 0));
+                const newElo = Math.max(0, currentElo + eloChange);
+
+                // Calculate rank points change
+                const currentRankPoints = player.rank_points || 0;
+                const currentStreak = player.streak || 0;
+                const rankPointsChange = calculateRankPointsChange(isWinner, isDraw, opponentAvgRank, currentRankPoints, currentStreak, scoreFor, scoreAgainst);
+                const newRankPoints = Math.max(0, currentRankPoints + rankPointsChange);
+
+                // Update streak
+                let newStreak;
+                if (isDraw) {
+                    newStreak = 0; // Draw resets streak
+                } else if (isWinner) {
+                    newStreak = currentStreak >= 0 ? currentStreak + 1 : 1; // Win streak
+                } else {
+                    newStreak = currentStreak <= 0 ? currentStreak - 1 : -1; // Loss streak
+                }
+
+                // Update matches and wins
+                const newMatches = (player.matches || 0) + 1;
+                const newWins = (player.wins || 0) + (isWinner ? 1 : 0);
+
+                // Update player in database
+                const { error } = await supabase
+                    .from('players')
+                    .update({
+                        elo: newElo,
+                        matches: newMatches,
+                        wins: newWins,
+                        rank_points: newRankPoints,
+                        streak: newStreak,
+                        last_rank_change: rankPointsChange
+                    })
+                    .eq('player_id', player.player_id);
+
+                if (error) {
+                    console.error('Error updating player stats:', error);
+                } else {
+                    console.log(`Updated ${player.name}: ELO ${currentElo}→${newElo} (${eloChange > 0 ? '+' : ''}${eloChange}), Rank ${currentRankPoints}→${newRankPoints} (${rankPointsChange > 0 ? '+' : ''}${rankPointsChange}), Streak: ${newStreak}`);
+                }
+
+            } catch (error) {
+                console.error('Error updating player stats:', error);
+                throw error;
+            }
+        }
+
+        function calculateELOChange(playerElo, opponentElo, result) {
+            // K-factor: higher for new players, lower for experienced players
+            const K = playerElo < 1200 ? 40 : (playerElo < 1600 ? 32 : 24);
+
+            // Expected score based on ELO difference
+            const expectedScore = 1 / (1 + Math.pow(10, (opponentElo - playerElo) / 400));
+
+            // Calculate ELO change
+            const eloChange = Math.round(K * (result - expectedScore));
+
+            return eloChange;
+        }
+
+        function calculateRankPointsChange(isWinner, isDraw, opponentAvgRank, currentRankPoints, currentStreak, scoreFor, scoreAgainst) {
+            let basePoints = 0;
+
+            if (isDraw) {
+                basePoints = 2; // Small reward for draw
+            } else if (isWinner) {
+                // Win base points: 15-25 based on score difference
+                const scoreDiff = scoreFor - scoreAgainst;
+                basePoints = 15 + Math.min(scoreDiff, 10); // 15-25 points for win
+            } else {
+                // Loss penalty: -5 to -15 based on score difference
+                const scoreDiff = scoreAgainst - scoreFor;
+                basePoints = -5 - Math.min(scoreDiff * 0.5, 10); // -5 to -15 points for loss
+            }
+
+            // Opponent difficulty bonus/penalty
+            const rankDifference = opponentAvgRank - currentRankPoints;
+            let difficultyModifier = 0;
+
+            if (rankDifference > 20) {
+                // Playing against much stronger opponents
+                difficultyModifier = isWinner ? 8 : 3; // Bonus for beating stronger, less penalty for losing
+            } else if (rankDifference < -20) {
+                // Playing against much weaker opponents
+                difficultyModifier = isWinner ? -3 : -5; // Less reward for beating weaker, more penalty for losing
+            }
+
+            // Streak bonus/penalty
+            let streakModifier = 0;
+            if (isWinner && currentStreak > 0) {
+                streakModifier = Math.min(currentStreak * 2, 10); // Up to +10 for win streak
+            } else if (!isWinner && currentStreak < 0) {
+                streakModifier = Math.max(currentStreak, -5); // Up to -5 additional penalty for loss streak
+            }
+
+            // Rank protection for new players
+            let protectionModifier = 0;
+            if (currentRankPoints < 30 && !isWinner) {
+                protectionModifier = 5; // Reduce penalty for new players
+            }
+
+            const totalChange = basePoints + difficultyModifier + streakModifier + protectionModifier;
+
+            return Math.round(totalChange);
+        }
+
+        async function saveMatchHistory(matchData) {
+            try {
+                const { matchId, matchDate, team1, team2, score1, score2, winner } = matchData;
+
+                const { error } = await supabase
+                    .from('match_history')
+                    .insert({
+                        match_id: matchId,
+                        match_date: matchDate,
+                        team_a_player1_id: team1[0]?.player_id,
+                        team_a_player1_name: team1[0]?.name,
+                        team_a_player2_id: team1[1]?.player_id,
+                        team_a_player2_name: team1[1]?.name,
+                        team_b_player1_id: team2[0]?.player_id,
+                        team_b_player1_name: team2[0]?.name,
+                        team_b_player2_id: team2[1]?.player_id,
+                        team_b_player2_name: team2[1]?.name,
+                        score_a: score1,
+                        score_b: score2,
+                        winner: winner
+                    });
+
+                if (error) {
+                    console.error('Error saving match history:', error);
+                } else {
+                    console.log(`Saved match history: ${matchId}`);
+                }
+
+            } catch (error) {
+                console.error('Error saving match history:', error);
+            }
+        }
+
+        // Rankings Tab Functions
+        async function loadRankings() {
+            try {
+                const { data, error } = await supabase
+                    .from('players')
+                    .select('*')
+                    .order('rank_points', { ascending: false })
+                    .order('elo', { ascending: false })
+                    .order('wins', { ascending: false });
+
+                if (error) throw error;
+
+                const rankingList = document.getElementById('rankingList');
+                rankingList.innerHTML = '';
+
+                if (data && data.length > 0) {
+                    // Group players by rank tier
+                    const groupedByRank = groupPlayersByRank(data);
+
+                    // Render each rank group
+                    Object.keys(groupedByRank).forEach(rankName => {
+                        const players = groupedByRank[rankName];
+
+                        // Add rank section header
+                        const rankHeader = document.createElement('div');
+                        rankHeader.className = 'rank-section-header';
+                        rankHeader.innerHTML = `
+                            <div class="rank-tier-badge ${getRankClass(rankName)}">
+                                ${getRankIcon(rankName)} ${rankName}
+                            </div>
+                            <div class="rank-count">${players.length} người chơi</div>
+                        `;
+                        rankingList.appendChild(rankHeader);
+
+                        // Add players in this rank
+                        players.forEach((player, index) => {
+                            const rankingItem = document.createElement('div');
+                            rankingItem.className = `ranking-item rank-${getRankClass(rankName)}`;
+
+                            const winRate = player.matches > 0 ? Math.round((player.wins / player.matches) * 100) : 0;
+                            const rankClass = getRankClass(rankName);
+
+                            rankingItem.innerHTML = `
+                                <div class="ranking-avatar-container ${rankClass}">
+                                    <div class="ranking-avatar ${rankClass}">
+                                        ${getInitials(player.name)}
+                                    </div>
+                                    <div class="rank-crown ${rankClass}">
+                                        ${getRankIcon(rankName)}
+                                    </div>
+                                </div>
+                                <div class="ranking-info">
+                                    <div class="ranking-name">${player.name}</div>
+                                    <div class="ranking-stats">
+                                        ${player.matches} trận • ${player.wins} thắng • ${winRate}% WR
+                                        ${player.streak !== 0 ? ` • Streak: ${player.streak > 0 ? '+' : ''}${player.streak}` : ''}
+                                    </div>
+                                </div>
+                                <div class="ranking-rank">
+                                    <div class="rank-badge ${rankClass}">${rankName}</div>
+                                    <div style="font-weight: bold; color: var(--facebook-text);">${player.rank_points} Điểm</div>
+                                    <div style="font-size: 12px; color: var(--facebook-secondary-text);">ELO: ${player.elo}</div>
+                                </div>
+                            `;
+
+                            rankingList.appendChild(rankingItem);
+                        });
+                    });
+                } else {
+                    rankingList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--facebook-secondary-text);">Chưa có dữ liệu xếp hạng</div>';
+                }
+
+            } catch (error) {
+                console.error('Error loading rankings:', error);
+                document.getElementById('rankingList').innerHTML = '<div style="text-align: center; padding: 40px; color: var(--facebook-secondary-text);">Lỗi tải dữ liệu</div>';
+            }
+        }
+
+        function groupPlayersByRank(players) {
+            const groups = {
+                'Thách Đấu': [],
+                'Kim Cương': [],
+                'Vàng': [],
+                'Bạc': [],
+                'Đồng': []
+            };
+
+            players.forEach(player => {
+                const rankName = getRankName(player.rank_points);
+                groups[rankName].push(player);
+            });
+
+            // Remove empty groups and sort players within each group
+            Object.keys(groups).forEach(rankName => {
+                if (groups[rankName].length === 0) {
+                    delete groups[rankName];
+                } else {
+                    // Sort by rank_points desc, then ELO desc, then wins desc
+                    groups[rankName].sort((a, b) => {
+                        if (b.rank_points !== a.rank_points) return b.rank_points - a.rank_points;
+                        if (b.elo !== a.elo) return b.elo - a.elo;
+                        return b.wins - a.wins;
+                    });
+                }
+            });
+
+            return groups;
+        }
+
+        function getRankClass(rankName) {
+            switch(rankName) {
+                case 'Thách Đấu': return 'challenger';
+                case 'Kim Cương': return 'diamond';
+                case 'Vàng': return 'gold';
+                case 'Bạc': return 'silver';
+                case 'Đồng': return 'bronze';
+                default: return 'bronze';
+            }
+        }
+
+        function getRankIcon(rankName) {
+            switch(rankName) {
+                case 'Thách Đấu': return '👑';
+                case 'Kim Cương': return '💎';
+                case 'Vàng': return '🥇';
+                case 'Bạc': return '🥈';
+                case 'Đồng': return '🥉';
+                default: return '🥉';
+            }
+        }
+
+        // History Tab Functions
+        async function loadMatchHistory() {
+            try {
+                const { data, error } = await supabase
+                    .from('match_history')
+                    .select('*')
+                    .order('match_date', { ascending: false })
+                    .limit(50);
+
+                if (error) throw error;
+
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = '';
+
+                if (data && data.length > 0) {
+                    data.forEach(match => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+
+                        const matchDate = new Date(match.match_date).toLocaleDateString('vi-VN', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        const team1Names = [match.team_a_player1_name, match.team_a_player2_name].filter(n => n).join(' & ');
+                        const team2Names = [match.team_b_player1_name, match.team_b_player2_name].filter(n => n).join(' & ');
+
+                        const team1Class = match.winner === 'A' ? 'winner' : (match.winner === 'DRAW' ? '' : 'loser');
+                        const team2Class = match.winner === 'B' ? 'winner' : (match.winner === 'DRAW' ? '' : 'loser');
+
+                        let resultText = '';
+                        if (match.winner === 'A') resultText = 'Đội A thắng';
+                        else if (match.winner === 'B') resultText = 'Đội B thắng';
+                        else resultText = 'Hòa';
+
+                        historyItem.innerHTML = `
+                            <div class="match-header">
+                                <div class="match-date">${matchDate}</div>
+                                <div class="match-score">${match.score_a} - ${match.score_b}</div>
+                            </div>
+                            <div class="match-teams">
+                                <div class="team ${team1Class}">
+                                    <div style="font-weight: 600; margin-bottom: 4px;">Đội A</div>
+                                    <div style="font-size: 14px;">${team1Names}</div>
+                                </div>
+                                <div style="text-align: center; color: var(--facebook-secondary-text); font-size: 18px; font-weight: bold;">VS</div>
+                                <div class="team ${team2Class}">
+                                    <div style="font-weight: 600; margin-bottom: 4px;">Đội B</div>
+                                    <div style="font-size: 14px;">${team2Names}</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 8px; font-size: 13px; color: var(--facebook-secondary-text);">
+                                ${resultText}
+                            </div>
+                        `;
+
+                        historyList.appendChild(historyItem);
+                    });
+
+                    // Update total matches count
+                    const totalMatchesElement = document.getElementById('total-matches');
+                    if (totalMatchesElement) {
+                        totalMatchesElement.textContent = data.length;
+                    }
+                } else {
+                    historyList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--facebook-secondary-text);">Chưa có lịch sử trận đấu</div>';
+                }
+
+            } catch (error) {
+                console.error('Error loading match history:', error);
+                document.getElementById('historyList').innerHTML = '<div style="text-align: center; padding: 40px; color: var(--facebook-secondary-text);">Lỗi tải dữ liệu</div>';
+            }
+        }
+
+        // Expenses Tab Functions - Simple Admin Reset
+        let expenseTabClickCount = 0;
+        let expenseTabClickTimer = null;
+        let expenseClickHandlerSetup = false;
+
+        function setupExpenseTabClickHandler() {
+            if (expenseClickHandlerSetup) return;
+
+            const expenseTitle = document.getElementById('expenseTitle');
+            if (expenseTitle) {
+                expenseTitle.addEventListener('click', handleExpenseTitleClick);
+                expenseTitle.style.cursor = 'pointer';
+                expenseClickHandlerSetup = true;
+                console.log('🔧 Admin reset: Click tiêu đề "Chi Phí Câu Lạc Bộ" 5 lần nhanh');
+            }
+        }
+
+        function handleExpenseTitleClick(event) {
+            expenseTabClickCount++;
+            console.log(`🔧 Admin click: ${expenseTabClickCount}/5`);
+
+            // Visual feedback
+            const title = event.target;
+            title.style.color = '#ff4757';
+            title.style.transform = 'scale(1.05)';
+
+            setTimeout(() => {
+                title.style.color = 'var(--facebook-text)';
+                title.style.transform = 'scale(1)';
+            }, 200);
+
+            // Reset counter after 2 seconds
+            clearTimeout(expenseTabClickTimer);
+            expenseTabClickTimer = setTimeout(() => {
+                expenseTabClickCount = 0;
+                console.log('🔧 Reset admin counter');
+            }, 2000);
+
+            // Show admin reset after 5 clicks
+            if (expenseTabClickCount >= 5) {
+                expenseTabClickCount = 0;
+                showAdminResetOption();
+            }
+        }
+
+        function showAdminResetOption() {
+            console.log('🔧 Showing admin reset dialog');
+            const confirmed = confirm('🔧 ADMIN MODE ACTIVATED!\n\n⚠️ RESET TẤT CẢ DỮ LIỆU?\n\nHành động này sẽ:\n• Xóa tất cả ELO, rank, matches\n• Xóa lịch sử trận đấu  \n• Đưa về trạng thái ban đầu\n\n❌ KHÔNG THỂ HOÀN TÁC!\n\nNhấn OK để tiếp tục');
+
+            if (confirmed) {
+                console.log('🔧 User confirmed reset');
+                requestResetAllData();
+            } else {
+                console.log('🔧 User cancelled reset');
+            }
+        }
+
+        // Load expenses from database
+        async function loadExpenses() {
+            try {
+                // First try to create expenses table if it doesn't exist
+                await createExpensesTable();
+
+                const { data, error } = await supabase
+                    .from('expenses')
+                    .select('*')
+                    .order('expense_type', { ascending: true });
+
+                if (error) {
+                    console.error('Error loading expenses from DB:', error);
+                    showDefaultExpenses();
+                    return;
+                }
+
+                const expenseCards = document.getElementById('expenseCards');
+                expenseCards.innerHTML = '';
+
+                if (data && data.length > 0) {
+                    data.forEach(expense => {
+                        const card = document.createElement('div');
+                        card.className = `expense-card ${expense.expense_type}`;
+                        card.onclick = () => openEditExpenseModal(expense);
+
+                        const iconClass = expense.expense_type === 'court_fee' ? 'fas fa-building' : 'fas fa-shopping-cart';
+
+                        // Split description to get title and note
+                        const descParts = expense.description.split(' - ');
+                        const displayTitle = descParts[0] || expense.description;
+                        const displayNote = descParts[1] || expense.expense_type;
+
+                        card.innerHTML = `
+                            <div class="expense-icon">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div class="expense-info">
+                                <div class="expense-title">${displayTitle}</div>
+                                <div class="expense-amount">${expense.amount.toLocaleString('vi-VN')} VNĐ</div>
+                                <div class="expense-note">${displayNote}</div>
+                            </div>
+                        `;
+
+                        expenseCards.appendChild(card);
+                    });
+                } else {
+                    // Insert default data if empty
+                    await insertDefaultExpenses();
+                    // Show default data immediately instead of recursive call
+                    showDefaultExpenses();
+                }
+
+            } catch (error) {
+                console.error('Error loading expenses:', error);
+                // Show default static data if database fails
+                showDefaultExpenses();
+            }
+        }
+
+        // Create expenses table if it doesn't exist
+        async function createExpensesTable() {
+            try {
+                // This is just for logging - actual table creation should be done in Supabase
+                console.log('📋 Expenses table should be created in Supabase dashboard');
+            } catch (error) {
+                console.error('Error creating expenses table:', error);
+            }
+        }
+
+        // Show default expenses when database is not available
+        function showDefaultExpenses() {
+            const expenseCards = document.getElementById('expenseCards');
+            if (!expenseCards) return;
+
+            expenseCards.innerHTML = '';
+
+            const defaultExpenses = [
+                {
+                    id: 1,
+                    description: 'Thuê Sân Pickleball Incanto',
+                    amount: 2000000,
+                    expense_type: 'court_fee'
+                },
+                {
+                    id: 2,
+                    description: 'Chi phí phát sinh: bóng, nước uống, v.v.',
+                    amount: 500000,
+                    expense_type: 'misc_fee'
+                }
+            ];
+
+            defaultExpenses.forEach(expense => {
+                const card = document.createElement('div');
+                card.className = `expense-card ${expense.expense_type}`;
+                card.onclick = () => openEditExpenseModal(expense);
+
+                const iconClass = expense.expense_type === 'court_fee' ? 'fas fa-building' : 'fas fa-shopping-cart';
+
+                card.innerHTML = `
+                    <div class="expense-icon">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="expense-info">
+                        <div class="expense-title">${expense.description}</div>
+                        <div class="expense-amount">${expense.amount.toLocaleString('vi-VN')} VNĐ</div>
+                        <div class="expense-note">${expense.expense_type}</div>
+                    </div>
+                `;
+
+                expenseCards.appendChild(card);
+            });
+
+            console.log('✅ Showing default expenses (database not available)');
+        }
+
+        async function insertDefaultExpenses() {
+            try {
+                const { error } = await supabase
+                    .from('expenses')
+                    .insert([
+                        {
+                            expense_id: 1,
+                            expense_type: 'court_fee',
+                            description: 'Thuê Sân Pickleball Incanto',
+                            amount: 2000000,
+                            expense_date: new Date().toISOString().split('T')[0]
+                        },
+                        {
+                            expense_id: 2,
+                            expense_type: 'misc_fee',
+                            description: 'Chi phí phát sinh: bóng, nước uống, v.v.',
+                            amount: 500000,
+                            expense_date: new Date().toISOString().split('T')[0]
+                        }
+                    ]);
+
+                if (error) {
+                    console.error('Error inserting default expenses:', error);
+                    // If table doesn't exist, just show default data
+                    showDefaultExpenses();
+                    return;
+                }
+                console.log('Inserted default expenses');
+
+            } catch (error) {
+                console.error('Error inserting default expenses:', error);
+                // Fallback to showing default data
+                showDefaultExpenses();
+            }
+        }
+
+        function showDefaultExpenses() {
+            const expenseCards = document.getElementById('expenseCards');
+            expenseCards.innerHTML = `
+                <div class="expense-card court-fee" onclick="openEditExpenseModal({id: 1, expense_type: 'court_fee', title: 'Thuê Sân', amount: 2000000, description: 'Sân Pickleball Incanto'})">
+                    <div class="expense-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="expense-info">
+                        <div class="expense-title">Thuê Sân</div>
+                        <div class="expense-amount">2.000.000 VNĐ</div>
+                        <div class="expense-note">Sân Pickleball Incanto</div>
+                    </div>
+                </div>
+
+                <div class="expense-card misc-fee" onclick="openEditExpenseModal({id: 2, expense_type: 'misc_fee', title: 'Chi Phí Phát Sinh', amount: 500000, description: 'Bóng, nước uống, v.v.'})">
+                    <div class="expense-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="expense-info">
+                        <div class="expense-title">Chi Phí Phát Sinh</div>
+                        <div class="expense-amount">500.000 VNĐ</div>
+                        <div class="expense-note">Bóng, nước uống, v.v.</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Edit expense functions
+        let currentEditingExpense = null;
+
+        function openEditExpenseModal(expense) {
+            currentEditingExpense = expense;
+
+            // Split description to get title and description parts
+            const descParts = expense.description ? expense.description.split(' - ') : ['', ''];
+            const title = descParts[0] || expense.description || expense.title || '';
+            const description = descParts[1] || '';
+
+            document.getElementById('editExpenseTitle').value = title;
+            document.getElementById('editExpenseAmount').value = expense.amount;
+            document.getElementById('editExpenseDescription').value = description;
+
+            document.getElementById('editExpenseModal').classList.add('show');
+        }
+
+        function closeEditExpenseModal() {
+            document.getElementById('editExpenseModal').classList.remove('show');
+            currentEditingExpense = null;
+        }
+
+        async function saveExpenseChanges() {
+            if (!currentEditingExpense) return;
+
+            // Request password silently
+            const password = prompt('Nhập mật khẩu:');
+            if (password !== '111') {
+                showNotification('Không thể lưu thay đổi', 'error');
+                return;
+            }
+
+            const title = document.getElementById('editExpenseTitle').value.trim();
+            const amount = parseInt(document.getElementById('editExpenseAmount').value);
+            const description = document.getElementById('editExpenseDescription').value.trim();
+
+            if (!title || !amount || amount <= 0) {
+                showNotification('Vui lòng nhập đầy đủ thông tin hợp lệ', 'warning');
+                return;
+            }
+
+            try {
+                // Combine title and description for better info
+                const fullDescription = description ? `${title} - ${description}` : title;
+
+                const { error } = await supabase
+                    .from('expenses')
+                    .update({
+                        description: fullDescription, // Combine title and description
+                        amount: amount,
+                        expense_type: currentEditingExpense.expense_type // Keep existing expense_type
+                    })
+                    .eq('id', currentEditingExpense.id);
+
+                if (error) throw error;
+
+                showNotification('Đã cập nhật chi phí thành công', 'success');
+                closeEditExpenseModal();
+                loadExpenses(); // Reload to show changes
+
+            } catch (error) {
+                console.error('Error updating expense:', error);
+                showNotification('Lỗi cập nhật chi phí', 'error');
+            }
+        }
+
+        function openAddExpenseModal() {
+            showNotification('Tính năng thêm chi phí đang phát triển', 'info');
+        }
+
+        // Penalty Management System
+        async function addPenaltiesForLosers(matchResult) {
+            try {
+                const { team1, team2, winner, matchId } = matchResult;
+                const losingTeam = winner === 'A' ? team2 : (winner === 'B' ? team1 : []);
+
+                // Add penalties for each losing player
+                for (const player of losingTeam) {
+                    const { error } = await supabase
+                        .from('penalties')
+                        .insert({
+                            player_id: player.player_id,
+                            player_name: player.name,
+                            match_id: matchId,
+                            amount: 50000,
+                            is_paid: false
+                        });
+
+                    if (error) {
+                        console.error('Error adding penalty for', player.name, ':', error);
+                    } else {
+                        console.log(`Added 50K penalty for ${player.name}`);
+                    }
+                }
+
+                // Refresh penalty display if on expenses tab
+                if (currentTab === 'expenses') {
+                    await loadPenalties();
+                    await loadFundStatus();
+                }
+
+            } catch (error) {
+                console.error('Error adding penalties:', error);
+            }
+        }
+
+        async function loadPenalties() {
+            try {
+                const { data, error } = await supabase
+                    .from('penalties')
+                    .select('*')
+                    .order('is_paid', { ascending: true })
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const penaltiesList = document.getElementById('penaltiesList');
+                penaltiesList.innerHTML = '';
+
+                if (data && data.length > 0) {
+                    data.forEach(penalty => {
+                        const penaltyItem = document.createElement('div');
+                        penaltyItem.className = 'penalty-item';
+
+                        const statusClass = penalty.is_paid ? 'paid' : 'unpaid';
+
+                        penaltyItem.innerHTML = `
+                            <div class="penalty-info">
+                                <input type="checkbox"
+                                       id="penalty-${penalty.id}"
+                                       class="penalty-checkbox"
+                                       ${penalty.is_paid ? 'checked disabled' : ''}
+                                       onchange="markPenaltyAsPaid(${penalty.id}, this)"
+                                       ${penalty.is_paid ? '' : 'data-processing="false"'}>
+                                <span class="penalty-player ${statusClass}">${penalty.player_name}</span>
+                            </div>
+                            <span class="penalty-amount ${statusClass}">${penalty.amount.toLocaleString('vi-VN')} VNĐ</span>
+                        `;
+
+                        penaltiesList.appendChild(penaltyItem);
+                    });
+                } else {
+                    penaltiesList.innerHTML = '<div class="no-penalties">Chưa có phạt nào</div>';
+                }
+
+            } catch (error) {
+                console.error('Error loading penalties:', error);
+                document.getElementById('penaltiesList').innerHTML = '<div class="no-penalties">Lỗi tải dữ liệu</div>';
+            }
+        }
+
+        // Prevent multiple simultaneous penalty payments
+        let isProcessingPayment = false;
+
+        async function markPenaltyAsPaid(penaltyId, checkbox) {
+            // Prevent multiple clicks
+            if (isProcessingPayment) {
+                checkbox.checked = false;
+                showNotification('Đang xử lý thanh toán khác, vui lòng đợi', 'warning');
+                return;
+            }
+
+            // Request password silently
+            const password = prompt('Xác nhận thanh toán:');
+            if (password !== '111') {
+                checkbox.checked = false;
+                showNotification('Không thể xác nhận', 'error');
+                return;
+            }
+
+            isProcessingPayment = true;
+            checkbox.disabled = true;
+
+            try {
+                // First get the penalty amount
+                const { data: penalty, error: fetchError } = await supabase
+                    .from('penalties')
+                    .select('amount')
+                    .eq('id', penaltyId)
+                    .single();
+
+                if (fetchError) throw fetchError;
+
+                // Mark penalty as paid
+                const { error: updateError } = await supabase
+                    .from('penalties')
+                    .update({
+                        is_paid: true,
+                        paid_at: new Date().toISOString()
+                    })
+                    .eq('id', penaltyId);
+
+                if (updateError) throw updateError;
+
+                // Update fund status by adding penalty amount (use manual method)
+                await updateFundManually(penalty.amount);
+
+                showNotification(`Đã xác nhận thanh toán ${penalty.amount.toLocaleString('vi-VN')} VNĐ`, 'success');
+
+                // Reload penalties and fund status
+                await loadPenalties();
+                await loadFundStatus();
+
+            } catch (error) {
+                console.error('Error marking penalty as paid:', error);
+                checkbox.checked = false;
+                checkbox.disabled = false;
+                showNotification('Lỗi xác nhận thanh toán', 'error');
+            } finally {
+                // Always reset processing flag
+                isProcessingPayment = false;
+                checkbox.disabled = false;
+            }
+        }
+
+        // Alternative fund update method
+        async function updateFundManually(amount) {
+            try {
+                // Get current fund
+                const { data: fund, error: fetchError } = await supabase
+                    .from('fund_status')
+                    .select('current_amount')
+                    .eq('id', 1)
+                    .single();
+
+                if (fetchError) throw fetchError;
+
+                // Update with new amount
+                const newAmount = fund.current_amount + amount;
+                const { error: updateError } = await supabase
+                    .from('fund_status')
+                    .update({
+                        current_amount: newAmount,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', 1);
+
+                if (updateError) throw updateError;
+
+                console.log(`✅ Fund updated manually: +${amount.toLocaleString('vi-VN')} VNĐ`);
+
+            } catch (error) {
+                console.error('Error updating fund manually:', error);
+            }
+        }
+
+        async function loadFundStatus() {
+            try {
+                const { data, error } = await supabase
+                    .from('fund_status')
+                    .select('*')
+                    .limit(1);
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    const fund = data[0];
+                    const currentAmount = fund.current_amount;
+                    const targetAmount = fund.target_amount;
+                    const percentage = Math.round((currentAmount / targetAmount) * 100);
+                    const remaining = targetAmount - currentAmount;
+
+                    // Update UI
+                    document.getElementById('currentFundAmount').textContent = currentAmount.toLocaleString('vi-VN') + ' VNĐ';
+                    document.getElementById('fundProgressBar').style.width = percentage + '%';
+                    document.getElementById('fundProgressText').textContent = `${percentage}% / ${targetAmount.toLocaleString('vi-VN')} VNĐ`;
+                    document.getElementById('remainingAmount').textContent = `Còn thiếu: ${remaining.toLocaleString('vi-VN')} VNĐ`;
+
+                    // Change progress bar color when close to target
+                    const progressBar = document.getElementById('fundProgressBar');
+                    if (percentage >= 90) {
+                        progressBar.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+                    } else if (percentage >= 70) {
+                        progressBar.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+                    } else {
+                        progressBar.style.background = 'linear-gradient(90deg, #27ae60, #2ecc71)';
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error loading fund status:', error);
+            }
+        }
+
+        // Insert previous match penalty data (with duplicate prevention)
+        async function insertPreviousMatchPenalties() {
+            try {
+                // First check if data already exists for match_id = 1
+                const { data: existing, error: checkError } = await supabase
+                    .from('penalties')
+                    .select('id')
+                    .eq('match_id', 1)
+                    .limit(1);
+
+                if (checkError) throw checkError;
+
+                if (existing && existing.length > 0) {
+                    showNotification('Dữ liệu trận trước đã tồn tại', 'info');
+                    console.log('⚠️ Previous match data already exists, skipping insert');
+                    return;
+                }
+
+                const penaltyData = [
+                    { name: 'Ninh', amount: 150000 },
+                    { name: 'Đ.Anh', amount: 100000 },
+                    { name: 'Hạnh', amount: 100000 },
+                    { name: 'Linh', amount: 100000 },
+                    { name: 'Duy', amount: 100000 },
+                    { name: 'Chị Huyền', amount: 50000 },
+                    { name: 'Việt Anh', amount: 150000 },
+                    { name: 'Hương', amount: 100000 },
+                    { name: 'Thảo', amount: 50000 },
+                    { name: 'Mạnh', amount: 100000 }
+                ];
+
+                const penalties = [];
+
+                // Create individual 50K penalties for each player
+                penaltyData.forEach((player, index) => {
+                    const numPenalties = player.amount / 50000;
+                    for (let i = 0; i < numPenalties; i++) {
+                        penalties.push({
+                            player_id: index + 1,
+                            player_name: player.name,
+                            match_id: 1, // Previous match ID
+                            amount: 50000,
+                            is_paid: false
+                        });
+                    }
+                });
+
+                const { error } = await supabase
+                    .from('penalties')
+                    .insert(penalties);
+
+                if (error) throw error;
+
+                console.log(`✅ Inserted ${penalties.length} penalty records`);
+                console.log(`💰 Total penalty amount: ${penaltyData.reduce((sum, p) => sum + p.amount, 0).toLocaleString('vi-VN')} VNĐ`);
+
+                // Reload penalty display
+                if (currentTab === 'expenses') {
+                    await loadPenalties();
+                    await loadFundStatus();
+                }
+
+                showNotification('Đã nhập dữ liệu phạt từ trận trước', 'success');
+
+            } catch (error) {
+                console.error('Error inserting penalty data:', error);
+                showNotification('Lỗi nhập dữ liệu phạt', 'error');
+            }
+        }
+
+        // Create tables and insert data when page loads
+        window.addEventListener('load', async () => {
+            // Wait a bit for other initializations
+            setTimeout(async () => {
+                try {
+                    console.log('🔄 Initializing penalty system...');
+
+                    // First, try to create the tables if they don't exist
+                    await createPenaltyTables();
+
+                    // Then check if penalties already exist
+                    const { data, error } = await supabase
+                        .from('penalties')
+                        .select('id')
+                        .limit(1);
+
+                    if (error) {
+                        console.error('Error checking penalties:', error);
+                        return;
+                    }
+
+                    // Only insert if no penalties exist yet
+                    if (!data || data.length === 0) {
+                        console.log('🔄 No existing penalties found, inserting previous match data...');
+                        await insertPreviousMatchPenalties();
+                    } else {
+                        console.log('✅ Penalty data already exists, skipping insert');
+                    }
+                } catch (error) {
+                    console.error('Error initializing penalty system:', error);
+                }
+            }, 2000);
+        });
+
+        // Create penalty tables if they don't exist
+        async function createPenaltyTables() {
+            try {
+                // Create penalties table
+                const createPenaltiesTable = `
+                    CREATE TABLE IF NOT EXISTS penalties (
+                        id SERIAL PRIMARY KEY,
+                        player_id INTEGER NOT NULL,
+                        player_name VARCHAR(100) NOT NULL,
+                        match_id BIGINT NOT NULL,
+                        amount INTEGER DEFAULT 50000,
+                        is_paid BOOLEAN DEFAULT FALSE,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                        paid_at TIMESTAMP WITH TIME ZONE NULL
+                    );
+                `;
+
+                // Create fund_status table
+                const createFundTable = `
+                    CREATE TABLE IF NOT EXISTS fund_status (
+                        id SERIAL PRIMARY KEY,
+                        current_amount BIGINT DEFAULT 2000000,
+                        target_amount BIGINT DEFAULT 5000000,
+                        reward_description TEXT DEFAULT 'Đi ăn Lẩu Hải sản',
+                        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                    );
+                `;
+
+                // Insert initial fund status
+                const insertInitialFund = `
+                    INSERT INTO fund_status (current_amount, target_amount, reward_description)
+                    SELECT 2000000, 5000000, 'Đi ăn Lẩu Hải sản'
+                    WHERE NOT EXISTS (SELECT 1 FROM fund_status);
+                `;
+
+                // Execute table creation (Note: This might not work in browser, tables should be created in Supabase dashboard)
+                console.log('📋 Tables should be created in Supabase dashboard using the SQL scripts provided');
+
+                // For now, just log the SQL
+                console.log('SQL to run in Supabase:', {
+                    penalties: createPenaltiesTable,
+                    fund_status: createFundTable,
+                    initial_data: insertInitialFund
+                });
+
+            } catch (error) {
+                console.error('Error creating tables:', error);
+            }
+        }
+
+        // Helper function for showHistory button
+        function showHistory() {
+            switchTab('history');
+        }
+
+        // Auto-refresh related tabs after data changes
+        async function refreshRelatedTabs() {
+            try {
+                // Show loading indicator for current tab
+                if (currentTab === 'rankings') {
+                    const rankingList = document.getElementById('rankingList');
+                    if (rankingList) {
+                        rankingList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--facebook-blue);"><i class="fas fa-sync-alt fa-spin"></i> Đang cập nhật xếp hạng...</div>';
+                    }
+                    await loadRankings();
+                } else if (currentTab === 'history') {
+                    const historyList = document.getElementById('historyList');
+                    if (historyList) {
+                        historyList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--facebook-blue);"><i class="fas fa-sync-alt fa-spin"></i> Đang cập nhật lịch sử...</div>';
+                    }
+                    await loadMatchHistory();
+                }
+
+                // Update total matches counter in schedule tab
+                const totalMatchesElement = document.getElementById('total-matches');
+                if (totalMatchesElement) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('match_history')
+                            .select('match_id', { count: 'exact' });
+
+                        if (!error && data) {
+                            totalMatchesElement.textContent = data.length;
+                        }
+                    } catch (error) {
+                        console.error('Error updating match count:', error);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error refreshing tabs:', error);
+            }
+        }
+
+        // Reset All Data Functions
+        async function requestResetAllData() {
+            // Double confirmation for safety
+            const confirm1 = confirm('⚠️ BẠN CHẮC CHẮN MUỐN RESET TẤT CẢ DỮ LIỆU?\n\nViệc này sẽ:\n- Xóa tất cả ELO, rank points, matches, wins\n- Xóa toàn bộ lịch sử trận đấu\n- Xóa lịch sử team combinations\n- Đưa tất cả về trạng thái ban đầu\n\nHành động này KHÔNG THỂ HOÀN TÁC!');
+
+            if (!confirm1) return;
+
+            const confirm2 = confirm('🚨 XÁC NHẬN LẦN CUỐI!\n\nBạn có THỰC SỰ muốn xóa toàn bộ dữ liệu và bắt đầu lại từ đầu?\n\nNhấn OK để tiếp tục, Cancel để hủy.');
+
+            if (!confirm2) return;
+
+            // Request password
+            const password = prompt('🔒 Nhập mật khẩu admin để reset dữ liệu:');
+            if (password !== '111') {
+                showNotification('❌ Mật khẩu không đúng!', 'error');
+                return;
+            }
+
+            await resetAllData();
+        }
+
+        async function resetAllData() {
+            try {
+                showNotification('🔄 Đang reset tất cả dữ liệu...', 'info');
+
+                // Step 1: Reset all players stats
+                const { error: playersError } = await supabase
+                    .from('players')
+                    .update({
+                        elo: 1000,
+                        matches: 0,
+                        wins: 0,
+                        rank_points: 0,
+                        streak: 0,
+                        last_rank_change: 0
+                    })
+                    .neq('player_id', 0); // Update all players
+
+                if (playersError) throw playersError;
+
+                // Step 2: Delete all match history
+                const { error: historyError } = await supabase
+                    .from('match_history')
+                    .delete()
+                    .neq('match_id', 0); // Delete all records
+
+                if (historyError) throw historyError;
+
+                // Step 3: Delete all team combinations
+                const { error: teamError } = await supabase
+                    .from('team_combinations')
+                    .delete()
+                    .neq('id', 0); // Delete all records
+
+                if (teamError) throw teamError;
+
+                // Step 4: Delete all opponent combinations
+                const { error: opponentError } = await supabase
+                    .from('opponent_combinations')
+                    .delete()
+                    .neq('id', 0); // Delete all records
+
+                if (opponentError) throw opponentError;
+
+                // Step 5: Reload all data
+                await Promise.all([
+                    loadPlayersFromDB(),
+                    loadTeamCombinations(),
+                    loadOpponentCombinations()
+                ]);
+
+                // Step 6: Refresh current tab if needed
+                if (currentTab === 'rankings') {
+                    loadRankings();
+                } else if (currentTab === 'history') {
+                    loadMatchHistory();
+                }
+
+                showNotification('✅ Đã reset thành công! Tất cả dữ liệu đã về trạng thái ban đầu.', 'success');
+
+                // Show reset summary
+                setTimeout(() => {
+                    alert('🎉 RESET HOÀN TẤT!\n\n📊 Trạng thái mới:\n- Tất cả người chơi: ELO 1000, Rank 0 Điểm\n- Lịch sử trận đấu: Trống\n- Team combinations: Trống\n- Sẵn sàng cho season mới!\n\nChúc các bạn chơi vui vẻ! 🏓');
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error resetting data:', error);
+                showNotification('❌ Lỗi reset dữ liệu: ' + error.message, 'error');
+            }
+        }
+
+        // Show history
+        function showHistory() {
+            showNotification('Lịch sử trận đấu trống', 'info');
+        }
+
+        // Pull to refresh
+        function initializePullToRefresh() {
+            let startY = 0;
+            let currentY = 0;
+            let pullDistance = 0;
+            const pullThreshold = 80;
+            let isPulling = false;
+
+            document.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+                if (window.scrollY === 0) {
+                    isPulling = true;
+                }
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                if (!isPulling) return;
+
+                currentY = e.touches[0].clientY;
+                pullDistance = currentY - startY;
+
+                if (pullDistance > 0 && pullDistance < pullThreshold * 2) {
+                    const pullIndicator = document.getElementById('pullIndicator');
+                    if (pullIndicator) {
+                        pullIndicator.style.transform = `translateY(${pullDistance / 2}px)`;
+
+                        if (pullDistance > pullThreshold) {
+                            pullIndicator.classList.add('visible');
+                            pullIndicator.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Thả để làm mới';
+                        } else {
+                            pullIndicator.classList.remove('visible');
+                            pullIndicator.innerHTML = '<i class="fas fa-arrow-down"></i> Kéo để làm mới';
+                        }
+                    }
+                }
+            });
+
+            document.addEventListener('touchend', function() {
+                if (!isPulling) return;
+
+                const pullIndicator = document.getElementById('pullIndicator');
+
+                if (pullDistance > pullThreshold) {
+                    if (pullIndicator) {
+                        pullIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang làm mới...';
+                    }
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+
+                if (pullIndicator) {
+                    pullIndicator.style.transform = 'translateY(0)';
+                    pullIndicator.classList.remove('visible');
+                }
+                isPulling = false;
+                pullDistance = 0;
+            });
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.9);
+                color: #333;
+                padding: 12px 20px;
+                border-radius: 20px;
+                font-size: 14px;
+                z-index: 10000;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            `;
+
+            const iconMap = {
+                'success': '✅',
+                'error': '❌',
+                'info': 'ℹ️',
+                'warning': '⚠️'
+            };
+
+            notification.innerHTML = `${iconMap[type] || 'ℹ️'} ${message}`;
+            document.body.appendChild(notification);
+
+            // Show notification
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(-50%) translateY(0)';
+            }, 100);
+
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(-50%) translateY(-20px)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
