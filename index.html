@@ -12,8 +12,8 @@
     <link rel="manifest" href="manifest.json">
     
     <!-- Icons -->
-    <link rel="apple-touch-icon" href="icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="apple-touch-icon" href="icon-192x192.svg">
+    <link rel="icon" type="image/svg+xml" sizes="192x192" href="icon-192x192.svg">
     
     <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -24,22 +24,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* Facebook-style CSS Variables */
+        /* Design System Variables */
         :root {
-            --facebook-blue: #1877F2;
-            --facebook-green: #42B883;
-            --facebook-gray: #65676B;
-            --facebook-orange: #ff6b35;
-            --facebook-light-gray: #F0F2F5;
-            --facebook-border: #DADDE1;
-            --facebook-text: #1C1E21;
-            --facebook-secondary-text: #65676B;
+            --primary-blue: #1877F2;
+            --primary-green: #42B883;
+            --primary-orange: #ff6b35;
+            --primary-red: #e74c3c;
+            --gray-100: #F0F2F5;
+            --gray-200: #E4E6EA;
+            --gray-300: #DADDE1;
+            --gray-400: #BCC0C4;
+            --gray-500: #8A8D91;
+            --gray-600: #65676B;
+            --gray-700: #4B4F56;
+            --gray-800: #1C1E21;
+            --white: #FFFFFF;
+            --facebook-surface: var(--white);
+            --facebook-border: var(--gray-300);
+            --facebook-text: var(--gray-800);
+            --facebook-secondary-text: var(--gray-600);
             --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
             --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.12);
+            --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.15);
             --transition-fast: all 0.2s ease;
             --transition-normal: all 0.3s ease;
+            --border-radius-small: 6px;
             --border-radius-normal: 8px;
             --border-radius-large: 12px;
+            --border-radius-xl: 16px;
         }
 
         /* Global Styles */
@@ -52,13 +64,14 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--facebook-light-gray);
+            background: var(--gray-100);
             color: var(--facebook-text);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             margin: 0;
             padding: 0;
+            line-height: 1.5;
         }
 
         /* Container */
@@ -1088,10 +1101,6 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
-        .reward-card.current-fund {
-            border-left: 4px solid #27ae60;
-        }
-
         .reward-card.penalty-fund {
             border-left: 4px solid #f39c12;
         }
@@ -1243,12 +1252,75 @@
         }
 
         .penalties-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 13px;
             font-weight: 600;
             color: var(--facebook-text);
             margin-bottom: 8px;
             padding-bottom: 4px;
             border-bottom: 1px solid var(--facebook-border);
+        }
+
+        .penalties-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .show-setup-btn {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(149, 165, 166, 0.3);
+        }
+
+        .show-setup-btn:hover {
+            background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(149, 165, 166, 0.4);
+        }
+
+
+
+        .reset-penalties-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+        }
+
+        .reset-penalties-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
+        }
+
+        .reset-penalties-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+        }
+
+        .reset-penalties-btn i {
+            font-size: 10px;
         }
 
         .penalties-list {
@@ -1402,7 +1474,7 @@
             text-align: center;
         }
 
-        .back-btn, .search-btn {
+        .back-btn, .search-btn, .add-transaction-btn {
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -1418,8 +1490,244 @@
             flex-shrink: 0;
         }
 
-        .back-btn:active, .search-btn:active {
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .expand-transactions-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3);
+        }
+
+        .expand-transactions-btn:hover {
+            background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(149, 165, 166, 0.4);
+        }
+
+        .expand-transactions-btn:active {
+            transform: scale(0.95);
+        }
+
+        .expand-transactions-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .expand-transactions-btn.expanded i {
+            transform: rotate(180deg);
+        }
+
+        .transaction-list {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .transaction-list.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .transaction-summary {
+            background: var(--facebook-surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--facebook-border);
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--facebook-secondary-text);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--facebook-text);
+        }
+
+        .stat-value.income {
+            color: #27ae60;
+        }
+
+        .stat-value.expense {
+            color: #e74c3c;
+        }
+
+        .setup-complete-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(39, 174, 96, 0.1);
+            border: 2px solid rgba(39, 174, 96, 0.3);
+            animation: pulse-success 2s infinite;
+        }
+
+        @keyframes pulse-success {
+            0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
+        }
+
+
+
+        .auto-setup-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(155, 89, 182, 0.3);
+        }
+
+        .auto-setup-btn:hover {
+            background: linear-gradient(135deg, #8e44ad, #7d3c98);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+        }
+
+        .auto-setup-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 6px rgba(155, 89, 182, 0.3);
+        }
+
+        .test-storage-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .test-storage-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #1f618d);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        .test-storage-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+        }
+
+        .fix-storage-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);
+        }
+
+        .fix-storage-btn:hover {
+            background: linear-gradient(135deg, #d35400, #a04000);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+        }
+
+        .fix-storage-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 6px rgba(230, 126, 34, 0.3);
+        }
+
+        .add-transaction-btn {
+            background: var(--facebook-green);
+            color: white;
+        }
+
+        .add-transaction-btn:hover {
+            background: #369870;
+            transform: scale(1.05);
+        }
+
+        .back-btn:active, .search-btn:active, .add-transaction-btn:active {
             background: var(--facebook-border);
+            transform: scale(0.9);
+        }
+
+        .add-transaction-btn:active {
+            background: #2d7a5f;
+        }
+
+        .delete-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #e74c3c;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .delete-btn:active {
+            background: #a93226;
             transform: scale(0.9);
         }
 
@@ -1517,6 +1825,154 @@
             color: var(--facebook-secondary-text);
         }
 
+        /* Bank Account Style */
+        .bank-account-section {
+            margin-bottom: 32px;
+        }
+
+        .account-balance-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--facebook-blue), var(--facebook-green));
+        }
+
+        .account-balance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .bank-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bank-logo {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        .bank-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #EE1C25;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-label {
+            font-size: 14px;
+            color: var(--facebook-secondary-text);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            color: var(--facebook-secondary-text);
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .favorite-btn:hover {
+            color: #ffd700;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--facebook-text);
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .account-nickname,
+        .account-link,
+        .account-number {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nickname-label,
+        .link-label,
+        .number-label {
+            font-size: 14px;
+            color: var(--facebook-secondary-text);
+        }
+
+        .nickname-value,
+        .number-value,
+        .link-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--facebook-text);
+        }
+
+        .copyable {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copyable:hover {
+            background: rgba(24, 119, 242, 0.1);
+            color: var(--facebook-blue);
+        }
+
+        .copy-icon {
+            font-size: 12px;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+
+        .copyable:hover .copy-icon {
+            opacity: 1;
+        }
+
+        .copy-success {
+            background: rgba(39, 174, 96, 0.1) !important;
+            color: #27ae60 !important;
+        }
+
+
+
         /* Responsive adjustments */
         @media (max-width: 360px) {
             .member-list {
@@ -1543,6 +1999,503 @@
             .member-stats {
                 font-size: 10px;
             }
+
+            .balance-amount {
+                font-size: 28px;
+            }
+
+            .account-balance-card {
+                padding: 20px;
+            }
+        }
+
+        /* Transaction History */
+        .transaction-section {
+            margin-bottom: 32px;
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .transaction-date-group {
+            margin-bottom: 20px;
+        }
+
+        .date-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--facebook-secondary-text);
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .transaction-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .transaction-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-transaction-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--facebook-light-gray);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--facebook-secondary-text);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 14px;
+            opacity: 0;
+        }
+
+        .transaction-item:hover .edit-transaction-btn {
+            opacity: 1;
+        }
+
+        .edit-transaction-btn:hover {
+            background: var(--facebook-blue);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .edit-transaction-btn:active {
+            transform: scale(0.9);
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            color: white;
+        }
+
+        .transaction-icon.income {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .transaction-icon.expense {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .transaction-info {
+            flex: 1;
+            margin-right: 12px;
+        }
+
+        .transaction-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 2px;
+        }
+
+        .transaction-subtitle {
+            font-size: 13px;
+            color: var(--facebook-secondary-text);
+        }
+
+        .transaction-amount {
+            font-size: 16px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .transaction-amount.income {
+            color: #27ae60;
+        }
+
+        .transaction-amount.expense {
+            color: #e74c3c;
+        }
+
+        /* Transaction Detail Modal */
+        .transaction-detail-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-bottom: 1px solid var(--facebook-border);
+        }
+
+        .detail-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 20px;
+            color: white;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--facebook-text);
+            margin-bottom: 4px;
+        }
+
+        .detail-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        .detail-content {
+            padding: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: var(--facebook-secondary-text);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: var(--facebook-text);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Receipt Section */
+        .receipt-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid var(--facebook-border);
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .receipt-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--facebook-text);
+        }
+
+        .upload-receipt-btn {
+            background: var(--facebook-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .upload-receipt-btn:hover {
+            background: #166FE5;
+            transform: translateY(-1px);
+        }
+
+        .receipt-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+        }
+
+        .receipt-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .receipt-item:hover {
+            transform: scale(1.05);
+        }
+
+        .receipt-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .receipt-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .receipt-item:hover .receipt-overlay {
+            opacity: 1;
+        }
+
+        .receipt-overlay i {
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Receipt Fullscreen Modal */
+        .receipt-modal {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .receipt-fullscreen-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .receipt-fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .receipt-fullscreen-header h2 {
+            color: white;
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .receipt-fullscreen-header .back-btn,
+        .receipt-fullscreen-header .download-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .receipt-fullscreen-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .receipt-fullscreen-body img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* Receipt Upload in Form */
+        .receipt-upload-area {
+            border: 2px dashed var(--facebook-border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+
+        .receipt-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .receipt-preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            border: 1px solid var(--facebook-border);
+        }
+
+        .receipt-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .receipt-preview-item .remove-receipt {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .receipt-preview-item .remove-receipt:hover {
+            background: #e74c3c;
+            transform: scale(1.1);
+        }
+
+        /* Auto Setup Modal Styles */
+        .setup-intro {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .setup-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .setup-intro h4 {
+            margin: 0 0 8px;
+            color: var(--facebook-text);
+            font-size: 18px;
+        }
+
+        .setup-intro p {
+            margin: 0;
+            color: var(--facebook-secondary-text);
+            font-size: 14px;
+        }
+
+        .setup-checklist {
+            margin: 24px 0;
+        }
+
+        .setup-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--facebook-border);
+            font-size: 14px;
+        }
+
+        .setup-item:last-child {
+            border-bottom: none;
+        }
+
+        .setup-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .setup-pending {
+            color: #bdc3c7;
+        }
+
+        .setup-loading {
+            color: #3498db;
+        }
+
+        .setup-success {
+            color: #27ae60;
+        }
+
+        .setup-error {
+            color: #e74c3c;
+        }
+
+        .setup-progress {
+            margin-top: 24px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--facebook-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 12px;
+            color: var(--facebook-secondary-text);
         }
     </style>
 </head>
@@ -1645,54 +2598,156 @@
         <div id="expensesContent" class="tab-content" style="display: none;">
             <h2 id="expenseTitle" style="text-align: center; color: var(--facebook-text); margin-bottom: 20px;">Chi Phí Câu Lạc Bộ</h2>
 
-            <!-- Monthly Expenses Section -->
-            <div class="expense-section">
-                <h3 class="section-title">
-                    <i class="fas fa-calendar-alt"></i>
-                    Chi Phí Tháng Này
-                </h3>
-                <div class="expense-cards" id="expenseCards">
-                    <!-- Expense cards will be loaded from database -->
+            <!-- Bank Account Style Section -->
+            <div class="bank-account-section">
+                <!-- Account Balance Card -->
+                <div class="account-balance-card" onclick="openTransactionHistory()">
+                    <div class="balance-header">
+                        <div class="bank-info">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI2IiBmaWxsPSIjRUUxQzI1Ii8+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNCw2KSI+CiAgICA8cGF0aCBkPSJNMiAwaDIwdjJIMnptMCA0aDIwdjJIMnptMCA0aDIwdjJIMnptMCA0aDIwdjJIMnoiIGZpbGw9IndoaXRlIi8+CiAgICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEwIiByPSI0IiBmaWxsPSIjRUUxQzI1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDwvZz4KPC9zdmc+Cg==" alt="Techcombank" class="bank-logo">
+                            <span class="bank-name">TECHCOMBANK</span>
+                        </div>
+                        <button class="favorite-btn">
+                            <i class="fas fa-star"></i>
+                        </button>
+                    </div>
+                    <div class="balance-label">Số dư</div>
+                    <div class="balance-amount" id="accountBalance">VNĐ 3,568,000</div>
+                    <div class="account-info">
+                        <div class="account-nickname">
+                            <span class="nickname-label">Nickname</span>
+                            <span class="nickname-value copyable" onclick="copyToClipboard('YEUNINH', this)">
+                                YEUNINH
+                                <i class="fas fa-copy copy-icon"></i>
+                            </span>
+                        </div>
+                        <div class="account-link">
+                            <span class="link-label">Số điện thoại liên kết</span>
+                            <span class="link-value copyable" onclick="copyToClipboard('0836341996', this)">
+                                0836341996
+                                <i class="fas fa-copy copy-icon"></i>
+                            </span>
+                        </div>
+                        <div class="account-number">
+                            <span class="number-label">Số tài khoản</span>
+                            <span class="number-value copyable" onclick="copyToClipboard('9999993496', this)">
+                                9999 9934 96
+                                <i class="fas fa-copy copy-icon"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Transaction History Section -->
+            <div class="transaction-section">
+                <div class="transaction-header">
+                    <h3 class="section-title">
+                        <i class="fas fa-history"></i>
+                        Lịch sử giao dịch
+                    </h3>
+                    <div class="header-actions">
+                        <button class="expand-transactions-btn" onclick="toggleTransactionHistory()" title="Mở rộng/Thu gọn">
+                            <i class="fas fa-chevron-down" id="expandIcon"></i>
+                        </button>
+                        <button class="test-storage-btn" onclick="testStorageUpload()" title="Test Storage Upload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </button>
+                        <button class="fix-storage-btn" onclick="fixStoragePolicies()" title="Fix Storage Policies">
+                            <i class="fas fa-wrench"></i>
+                        </button>
+                        <button class="auto-setup-btn" onclick="openAutoSetupModal()" title="Auto Setup Database">
+                            <i class="fas fa-magic"></i>
+                        </button>
+                        <button class="add-transaction-btn" onclick="openAddTransactionModal()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Transaction Summary (Always visible) -->
+                <div class="transaction-summary" id="transactionSummary">
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Tổng:</span>
+                            <span class="stat-value" id="totalTransactions">0 giao dịch</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Thu:</span>
+                            <span class="stat-value income" id="totalIncome">+0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Chi:</span>
+                            <span class="stat-value expense" id="totalExpense">-0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="transaction-list collapsed" id="transactionList">
+                    <!-- Sample transactions -->
+                    <div class="transaction-date-group">
+                        <div class="date-header">22/07/2025</div>
+
+                        <div class="transaction-item income">
+                            <div class="transaction-icon income">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="transaction-info" onclick="openTransactionDetail('tx1')">
+                                <div class="transaction-title">Tiền chuyển vào</div>
+                                <div class="transaction-subtitle">C Tính ck tiền an</div>
+                            </div>
+                            <div class="transaction-amount income">+ 550,000</div>
+                            <div class="transaction-actions">
+                                <button class="edit-transaction-btn" onclick="editTransaction('tx1')" title="Chỉnh sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-date-group">
+                        <div class="date-header">21/07/2025</div>
+
+                        <div class="transaction-item expense">
+                            <div class="transaction-icon expense">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="transaction-info" onclick="openTransactionDetail('tx2')">
+                                <div class="transaction-title">Thuê sân</div>
+                                <div class="transaction-subtitle">Sân pickleball Quận 7</div>
+                            </div>
+                            <div class="transaction-amount expense">- 300,000</div>
+                            <div class="transaction-actions">
+                                <button class="edit-transaction-btn" onclick="editTransaction('tx2')" title="Chỉnh sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="transaction-item expense">
+                            <div class="transaction-icon expense">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="transaction-info" onclick="openTransactionDetail('tx3')">
+                                <div class="transaction-title">Mua nước</div>
+                                <div class="transaction-subtitle">Nước uống cho thành viên</div>
+                            </div>
+                            <div class="transaction-amount expense">- 120,000</div>
+                            <div class="transaction-actions">
+                                <button class="edit-transaction-btn" onclick="editTransaction('tx3')" title="Chỉnh sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Rewards Section -->
+            <!-- Penalty Management Section -->
             <div class="expense-section">
-                <h3 class="section-title">
-                    <i class="fas fa-trophy"></i>
-                    Phân Thưởng
-                </h3>
-
                 <div class="reward-cards">
-                    <!-- Current Fund Card -->
-                    <div class="reward-card current-fund">
-                        <div class="reward-header">
-                            <i class="fas fa-piggy-bank"></i>
-                            <span>Quỹ Hiện Tại</span>
-                        </div>
-                        <div class="reward-amount" id="currentFundAmount">2.000.000 VNĐ</div>
-                        <div class="reward-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="fundProgressBar" style="width: 40%;"></div>
-                            </div>
-                            <div class="progress-text" id="fundProgressText">40% / 5.000.000 VNĐ</div>
-                        </div>
-                    </div>
-
-                    <!-- Reward Milestone Card -->
-                    <div class="reward-card milestone-card">
-                        <div class="reward-header">
-                            <i class="fas fa-trophy"></i>
-                            <span>Phần Thưởng</span>
-                        </div>
-                        <div class="milestone-reward">
-                            <div class="reward-icon">🦞</div>
-                            <div class="reward-title">Đi ăn Lẩu Hải sản</div>
-                            <div class="reward-subtitle">Khi đạt 5.000.000 VNĐ</div>
-                        </div>
-                        <div class="remaining-amount" id="remainingAmount">Còn thiếu: 3.000.000 VNĐ</div>
-                    </div>
-
                     <!-- Penalty Management Card -->
                     <div class="reward-card penalty-fund">
                         <div class="reward-header">
@@ -1707,6 +2762,15 @@
                         <div class="penalties-section">
                             <div class="penalties-header">
                                 <span>Danh sách chưa thanh toán:</span>
+                                <div class="penalties-actions">
+                                    <button class="show-setup-btn" onclick="forceShowSetupButtons()" title="Hiện setup buttons (Admin)" style="display: none;">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="reset-penalties-btn" onclick="resetPenalties()" title="Reset danh sách phạt">
+                                        <i class="fas fa-redo"></i>
+                                        Reset
+                                    </button>
+                                </div>
                             </div>
                             <div class="penalties-list" id="penaltiesList">
                                 <!-- Penalties will be loaded here -->
@@ -1715,6 +2779,7 @@
                     </div>
                 </div>
             </div>
+
 
 
         </div>
@@ -1767,6 +2832,234 @@
                 <div class="form-actions">
                     <button class="btn btn-secondary" onclick="closeEditExpenseModal()">Hủy</button>
                     <button class="btn btn-primary" onclick="saveExpenseChanges()">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div id="transactionDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="back-btn" onclick="closeTransactionDetail()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Chi tiết giao dịch</h2>
+                <div></div>
+            </div>
+
+            <div class="modal-body">
+                <div class="transaction-detail-card">
+                    <div class="detail-header">
+                        <div class="detail-icon" id="detailIcon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="detail-info">
+                            <div class="detail-title" id="detailTitle">Thuê sân</div>
+                            <div class="detail-amount" id="detailAmount">- 300,000 VNĐ</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-content">
+                        <div class="detail-row">
+                            <span class="detail-label">Ngày giao dịch</span>
+                            <span class="detail-value" id="detailDate">21/07/2025 14:30</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Mô tả</span>
+                            <span class="detail-value" id="detailDescription">Sân pickleball Quận 7</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Loại giao dịch</span>
+                            <span class="detail-value" id="detailType">Chi tiêu</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Người thực hiện</span>
+                            <span class="detail-value" id="detailUser">Admin</span>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Section -->
+                    <div class="receipt-section">
+                        <div class="receipt-header">
+                            <span class="receipt-title">Hóa đơn đính kèm</span>
+                            <button class="upload-receipt-btn" onclick="uploadReceipt()">
+                                <i class="fas fa-camera"></i>
+                                Thêm ảnh
+                            </button>
+                        </div>
+                        <div class="receipt-gallery" id="receiptGallery">
+                            <!-- Sample receipt -->
+                            <div class="receipt-item" onclick="viewReceiptFullscreen('receipt1.jpg')">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iI2Y4ZjlmYSIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NTY3NkIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkhvw6EgxJHGoW4gU8OibiBQaWNrbGViYWxsPC90ZXh0Pgo8L3N2Zz4K" alt="Hóa đơn sân pickleball">
+                                <div class="receipt-overlay">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Fullscreen Modal -->
+    <div id="receiptFullscreenModal" class="modal receipt-modal">
+        <div class="receipt-fullscreen-content">
+            <div class="receipt-fullscreen-header">
+                <button class="back-btn" onclick="closeReceiptFullscreen()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2>Hóa đơn</h2>
+                <button class="download-btn" onclick="downloadReceipt()">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+            <div class="receipt-fullscreen-body">
+                <img id="fullscreenReceiptImage" src="" alt="Hóa đơn">
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto Setup Modal -->
+    <div id="autoSetupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="autoSetupModalTitle">🚀 Auto Setup Database</h3>
+                <button class="close-btn" onclick="closeAutoSetupModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="setup-intro">
+                    <div class="setup-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h4>Tự động thiết lập Database & Storage</h4>
+                    <p>Hệ thống sẽ tự động tạo các bảng và cấu hình cần thiết:</p>
+                </div>
+
+                <div class="setup-checklist">
+                    <div class="setup-item" id="setupTransactions">
+                        <i class="fas fa-circle-notch fa-spin setup-loading" style="display: none;"></i>
+                        <i class="fas fa-circle setup-pending"></i>
+                        <i class="fas fa-check-circle setup-success" style="display: none;"></i>
+                        <i class="fas fa-times-circle setup-error" style="display: none;"></i>
+                        <span>Tạo bảng Transactions</span>
+                    </div>
+
+                    <div class="setup-item" id="setupPenalties">
+                        <i class="fas fa-circle-notch fa-spin setup-loading" style="display: none;"></i>
+                        <i class="fas fa-circle setup-pending"></i>
+                        <i class="fas fa-check-circle setup-success" style="display: none;"></i>
+                        <i class="fas fa-times-circle setup-error" style="display: none;"></i>
+                        <span>Tạo bảng Penalties</span>
+                    </div>
+
+                    <div class="setup-item" id="setupStorage">
+                        <i class="fas fa-circle-notch fa-spin setup-loading" style="display: none;"></i>
+                        <i class="fas fa-circle setup-pending"></i>
+                        <i class="fas fa-check-circle setup-success" style="display: none;"></i>
+                        <i class="fas fa-times-circle setup-error" style="display: none;"></i>
+                        <span>Tạo Storage Bucket</span>
+                    </div>
+
+                    <div class="setup-item" id="setupSampleData">
+                        <i class="fas fa-circle-notch fa-spin setup-loading" style="display: none;"></i>
+                        <i class="fas fa-circle setup-pending"></i>
+                        <i class="fas fa-check-circle setup-success" style="display: none;"></i>
+                        <i class="fas fa-times-circle setup-error" style="display: none;"></i>
+                        <span>Thêm dữ liệu mẫu</span>
+                    </div>
+                </div>
+
+                <div class="setup-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="setupProgressFill"></div>
+                    </div>
+                    <div class="progress-text" id="setupProgressText">Sẵn sàng để bắt đầu</div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closeAutoSetupModal()">Hủy</button>
+                <button class="btn btn-success" id="completeSetupBtn" onclick="runCompleteAutoSetup()" style="margin-right: 8px;">
+                    <i class="fas fa-bolt"></i>
+                    Setup Hoàn chỉnh (1-Click)
+                </button>
+                <button class="btn btn-primary" id="startSetupBtn" onclick="startAutoSetup()">
+                    <i class="fas fa-magic"></i>
+                    Setup Từng bước
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Transaction Modal -->
+    <div id="addTransactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="back-btn" onclick="closeAddTransactionModal()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 id="transactionModalTitle">Thêm giao dịch</h2>
+                <button class="delete-btn" id="deleteTransactionBtn" onclick="deleteTransaction()" style="display: none;">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Loại giao dịch:</label>
+                    <select id="transactionType" class="form-input">
+                        <option value="income">Thu nhập (+)</option>
+                        <option value="expense">Chi tiêu (-)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tiêu đề:</label>
+                    <input type="text" id="transactionTitle" class="form-input" placeholder="Nhập tiêu đề giao dịch">
+                </div>
+
+                <div class="form-group">
+                    <label>Số tiền (VNĐ):</label>
+                    <input type="number" id="transactionAmount" class="form-input" placeholder="Nhập số tiền">
+                </div>
+
+                <div class="form-group">
+                    <label>Mô tả:</label>
+                    <input type="text" id="transactionDescription" class="form-input" placeholder="Nhập mô tả chi tiết">
+                </div>
+
+                <div class="form-group">
+                    <label>Ngày giao dịch:</label>
+                    <input type="datetime-local" id="transactionDate" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label>Người thực hiện:</label>
+                    <input type="text" id="transactionUser" class="form-input" placeholder="Tên người thực hiện" value="Admin">
+                </div>
+
+                <div class="form-group">
+                    <label>Hóa đơn đính kèm:</label>
+                    <div class="receipt-upload-area">
+                        <input type="file" id="receiptFiles" multiple accept="image/*" style="display: none;" onchange="handleReceiptUpload(event)">
+                        <button type="button" class="upload-receipt-btn" onclick="document.getElementById('receiptFiles').click()">
+                            <i class="fas fa-camera"></i>
+                            Thêm ảnh hóa đơn
+                        </button>
+                        <div class="receipt-preview" id="receiptPreview">
+                            <!-- Receipt previews will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeAddTransactionModal()">Hủy</button>
+                    <button class="btn btn-primary" onclick="saveTransaction()">Lưu giao dịch</button>
                 </div>
             </div>
         </div>
@@ -2898,6 +4191,14 @@
                     winner: matchResult.winner
                 });
 
+                // Add penalties for losing team (if not a draw)
+                if (matchResult.winner !== 'DRAW') {
+                    await addPenaltiesForLosers({
+                        ...matchResult,
+                        matchId: matchId
+                    });
+                }
+
                 console.log(`Processed match result: ${matchResult.score1}-${matchResult.score2}, Winner: ${matchResult.winner}`);
 
             } catch (error) {
@@ -3335,6 +4636,10 @@
                 }
 
                 const expenseCards = document.getElementById('expenseCards');
+                if (!expenseCards) {
+                    console.error('expenseCards element not found');
+                    return;
+                }
                 expenseCards.innerHTML = '';
 
                 if (data && data.length > 0) {
@@ -3471,6 +4776,10 @@
 
         function showDefaultExpenses() {
             const expenseCards = document.getElementById('expenseCards');
+            if (!expenseCards) {
+                console.error('expenseCards element not found');
+                return;
+            }
             expenseCards.innerHTML = `
                 <div class="expense-card court-fee" onclick="openEditExpenseModal({id: 1, expense_type: 'court_fee', title: 'Thuê Sân', amount: 2000000, description: 'Sân Pickleball Incanto'})">
                     <div class="expense-icon">
@@ -3573,33 +4882,48 @@
                 const { team1, team2, winner, matchId } = matchResult;
                 const losingTeam = winner === 'A' ? team2 : (winner === 'B' ? team1 : []);
 
+                if (losingTeam.length === 0) {
+                    console.log('No losing team to penalize (draw or invalid result)');
+                    return;
+                }
+
+                console.log(`🚫 Adding penalties for losing team (${losingTeam.length} players)`);
+
                 // Add penalties for each losing player
                 for (const player of losingTeam) {
+                    const penaltyData = {
+                        player_name: player.name,
+                        amount: 50000,
+                        reason: 'Thua trận',
+                        match_date: new Date().toISOString(),
+                        is_paid: false
+                    };
+
                     const { error } = await supabase
                         .from('penalties')
-                        .insert({
-                            player_id: player.player_id,
-                            player_name: player.name,
-                            match_id: matchId,
-                            amount: 50000,
-                            is_paid: false
-                        });
+                        .insert([penaltyData]);
 
                     if (error) {
                         console.error('Error adding penalty for', player.name, ':', error);
                     } else {
-                        console.log(`Added 50K penalty for ${player.name}`);
+                        console.log(`✅ Added 50K penalty for ${player.name}`);
                     }
                 }
+
+                // Show notification
+                showNotification(
+                    `🚫 Đã thêm phạt 50K cho ${losingTeam.length} người thua trận`,
+                    'info'
+                );
 
                 // Refresh penalty display if on expenses tab
                 if (currentTab === 'expenses') {
                     await loadPenalties();
-                    await loadFundStatus();
                 }
 
             } catch (error) {
                 console.error('Error adding penalties:', error);
+                showNotification('Lỗi thêm phạt: ' + error.message, 'error');
             }
         }
 
@@ -4183,6 +5507,1770 @@
                 }, 300);
             }, 3000);
         }
+
+        // Bank Account Style Functions
+        function openTransactionHistory() {
+            // Scroll to transaction section
+            const transactionSection = document.querySelector('.transaction-section');
+            if (transactionSection) {
+                transactionSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function openAddExpense() {
+            showNotification('Tính năng thêm chi phí đang được phát triển', 'info');
+        }
+
+        function openAccountManagement() {
+            showNotification('Tính năng quản lý tài khoản đang được phát triển', 'info');
+        }
+
+        function openTransactionSearch() {
+            showNotification('Tính năng tìm kiếm giao dịch đang được phát triển', 'info');
+        }
+
+        // Transaction Detail Functions
+        let currentTransactionId = null;
+
+        function openTransactionDetail(transactionId) {
+            currentTransactionId = transactionId;
+
+            // Sample transaction data
+            const transactions = {
+                'tx1': {
+                    title: 'Tiền chuyển vào',
+                    amount: '+ 550,000 VNĐ',
+                    date: '22/07/2025 09:15',
+                    description: 'C Tính ck tiền an',
+                    type: 'Thu nhập',
+                    user: 'Thành viên',
+                    icon: 'fas fa-arrow-down',
+                    iconClass: 'income',
+                    receipts: []
+                },
+                'tx2': {
+                    title: 'Thuê sân',
+                    amount: '- 300,000 VNĐ',
+                    date: '21/07/2025 14:30',
+                    description: 'Sân pickleball Quận 7',
+                    type: 'Chi tiêu',
+                    user: 'Admin',
+                    icon: 'fas fa-arrow-up',
+                    iconClass: 'expense',
+                    receipts: ['receipt1.jpg']
+                },
+                'tx3': {
+                    title: 'Mua nước',
+                    amount: '- 120,000 VNĐ',
+                    date: '21/07/2025 16:45',
+                    description: 'Nước uống cho thành viên',
+                    type: 'Chi tiêu',
+                    user: 'Admin',
+                    icon: 'fas fa-shopping-cart',
+                    iconClass: 'expense',
+                    receipts: []
+                }
+            };
+
+            const transaction = transactions[transactionId];
+            if (!transaction) return;
+
+            // Update modal content
+            document.getElementById('detailIcon').innerHTML = `<i class="${transaction.icon}"></i>`;
+            document.getElementById('detailIcon').className = `detail-icon ${transaction.iconClass}`;
+            document.getElementById('detailTitle').textContent = transaction.title;
+            document.getElementById('detailAmount').textContent = transaction.amount;
+            document.getElementById('detailDate').textContent = transaction.date;
+            document.getElementById('detailDescription').textContent = transaction.description;
+            document.getElementById('detailType').textContent = transaction.type;
+            document.getElementById('detailUser').textContent = transaction.user;
+
+            // Update receipt gallery
+            const receiptGallery = document.getElementById('receiptGallery');
+            if (transaction.receipts && transaction.receipts.length > 0) {
+                receiptGallery.innerHTML = transaction.receipts.map(receipt => `
+                    <div class="receipt-item" onclick="viewReceiptFullscreen('${receipt}')">
+                        <img src="${receipt}" alt="Hóa đơn ${transaction.title}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI1MCIgZmlsbD0iI2Y4ZjlmYSIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM2NTY3NkIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkzhu5dpIHThuqNpIEFuaDwvdGV4dD4KPC9zdmc+Cg=='">
+                        <div class="receipt-overlay">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                receiptGallery.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--facebook-secondary-text);">
+                        <i class="fas fa-receipt" style="font-size: 24px; margin-bottom: 8px; opacity: 0.5;"></i>
+                        <div>Chưa có hóa đơn đính kèm</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('transactionDetailModal').classList.add('show');
+        }
+
+        function closeTransactionDetail() {
+            document.getElementById('transactionDetailModal').classList.remove('show');
+            currentTransactionId = null;
+        }
+
+        // Receipt Functions
+        function uploadReceipt() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+
+            input.onchange = function(e) {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        addReceiptToGallery(e.target.result, file.name);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            input.click();
+        }
+
+        function addReceiptToGallery(imageSrc, fileName) {
+            const receiptGallery = document.getElementById('receiptGallery');
+
+            // Remove "no receipts" message if exists
+            if (receiptGallery.innerHTML.includes('Chưa có hóa đơn')) {
+                receiptGallery.innerHTML = '';
+            }
+
+            const receiptItem = document.createElement('div');
+            receiptItem.className = 'receipt-item';
+            receiptItem.onclick = () => viewReceiptFullscreen(imageSrc);
+            receiptItem.innerHTML = `
+                <img src="${imageSrc}" alt="${fileName}">
+                <div class="receipt-overlay">
+                    <i class="fas fa-eye"></i>
+                </div>
+            `;
+
+            receiptGallery.appendChild(receiptItem);
+            showNotification('Đã thêm hóa đơn thành công', 'success');
+        }
+
+        function viewReceiptFullscreen(imageSrc) {
+            const fullscreenImage = document.getElementById('fullscreenReceiptImage');
+            fullscreenImage.src = imageSrc;
+            document.getElementById('receiptFullscreenModal').classList.add('show');
+        }
+
+        function closeReceiptFullscreen() {
+            document.getElementById('receiptFullscreenModal').classList.remove('show');
+        }
+
+        function downloadReceipt() {
+            const imageSrc = document.getElementById('fullscreenReceiptImage').src;
+            const link = document.createElement('a');
+            link.href = imageSrc;
+            link.download = `receipt_${Date.now()}.jpg`;
+            link.click();
+            showNotification('Đã tải xuống hóa đơn', 'success');
+        }
+
+
+
+        // Copy to clipboard function
+        async function copyToClipboard(text, element) {
+            try {
+                await navigator.clipboard.writeText(text);
+
+                // Visual feedback
+                element.classList.add('copy-success');
+                const originalText = element.innerHTML;
+                element.innerHTML = `${text} <i class="fas fa-check"></i>`;
+
+                showNotification('Đã sao chép: ' + text, 'success');
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    element.classList.remove('copy-success');
+                    element.innerHTML = originalText;
+                }, 2000);
+
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                showNotification('Đã sao chép: ' + text, 'success');
+            }
+        }
+
+        // Transaction Management
+        let currentEditingTransaction = null;
+        let transactions = {}; // Will be loaded from database
+
+        // Load transactions from Supabase
+        async function loadTransactionsFromDB() {
+            try {
+                const { data, error } = await supabase
+                    .from('transactions')
+                    .select('*')
+                    .order('transaction_date', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading transactions:', error);
+                    // If table doesn't exist, create it
+                    await createTransactionsTable();
+                    return;
+                }
+
+                // Convert to local format
+                transactions = {};
+                data.forEach(transaction => {
+                    transactions[transaction.id] = {
+                        id: transaction.id,
+                        type: transaction.transaction_type,
+                        title: transaction.title,
+                        amount: parseFloat(transaction.amount),
+                        description: transaction.description,
+                        date: transaction.transaction_date,
+                        user: transaction.user_name,
+                        icon: transaction.icon,
+                        receipts: transaction.receipt_urls || []
+                    };
+                });
+
+                console.log('Loaded transactions from database:', Object.keys(transactions).length, 'transactions');
+                refreshTransactionList();
+                updateTransactionSummary();
+                await updateAccountBalance();
+
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                showNotification('Lỗi tải dữ liệu giao dịch: ' + error.message, 'error');
+            }
+        }
+
+        // Create transactions table if not exists
+        async function createTransactionsTable() {
+            try {
+                // This should be done in Supabase dashboard, but we'll try here
+                console.log('📋 Transactions table should be created in Supabase dashboard');
+                console.log('📄 Use the SQL file: create_transactions_table.sql');
+
+                // Insert sample data if table is empty
+                await insertSampleTransactions();
+
+            } catch (error) {
+                console.error('Error creating transactions table:', error);
+            }
+        }
+
+        // Insert sample transactions
+        async function insertSampleTransactions() {
+            try {
+                const { data: existingData } = await supabase
+                    .from('transactions')
+                    .select('id')
+                    .limit(1);
+
+                if (existingData && existingData.length > 0) {
+                    console.log('Transactions table already has data');
+                    return;
+                }
+
+                const sampleTransactions = [
+                    {
+                        transaction_type: 'income',
+                        title: 'Tiền chuyển vào',
+                        amount: 550000,
+                        description: 'C Tính ck tiền an',
+                        transaction_date: '2025-07-22T09:15:00+07:00',
+                        user_name: 'Thành viên',
+                        icon: 'fas fa-arrow-down'
+                    },
+                    {
+                        transaction_type: 'expense',
+                        title: 'Thuê sân',
+                        amount: 300000,
+                        description: 'Sân pickleball Quận 7',
+                        transaction_date: '2025-07-21T14:30:00+07:00',
+                        user_name: 'Admin',
+                        icon: 'fas fa-arrow-up'
+                    },
+                    {
+                        transaction_type: 'expense',
+                        title: 'Mua nước',
+                        amount: 120000,
+                        description: 'Nước uống cho thành viên',
+                        transaction_date: '2025-07-21T16:45:00+07:00',
+                        user_name: 'Admin',
+                        icon: 'fas fa-shopping-cart'
+                    }
+                ];
+
+                const { error } = await supabase
+                    .from('transactions')
+                    .insert(sampleTransactions);
+
+                if (error) {
+                    console.error('Error inserting sample transactions:', error);
+                } else {
+                    console.log('Inserted sample transactions');
+                    await loadTransactionsFromDB();
+                }
+
+            } catch (error) {
+                console.error('Error inserting sample transactions:', error);
+            }
+        }
+
+        function authenticateAdmin() {
+            const password = prompt('Nhập mật khẩu admin để tiếp tục:');
+            if (password !== '111') {
+                showNotification('Mật khẩu không đúng!', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        function openAddTransactionModal() {
+            if (!authenticateAdmin()) return;
+
+            currentEditingTransaction = null;
+            document.getElementById('transactionModalTitle').textContent = 'Thêm giao dịch';
+            document.getElementById('deleteTransactionBtn').style.display = 'none';
+
+            // Reset form
+            document.getElementById('transactionType').value = 'expense';
+            document.getElementById('transactionTitle').value = '';
+            document.getElementById('transactionAmount').value = '';
+            document.getElementById('transactionDescription').value = '';
+            document.getElementById('transactionDate').value = new Date().toISOString().slice(0, 16);
+            document.getElementById('transactionUser').value = 'Admin';
+
+            document.getElementById('addTransactionModal').classList.add('show');
+        }
+
+
+
+        function closeAddTransactionModal() {
+            document.getElementById('addTransactionModal').classList.remove('show');
+            currentEditingTransaction = null;
+        }
+
+        async function saveTransaction() {
+            const type = document.getElementById('transactionType').value;
+            const title = document.getElementById('transactionTitle').value.trim();
+            const amount = parseInt(document.getElementById('transactionAmount').value);
+            const description = document.getElementById('transactionDescription').value.trim();
+            const date = document.getElementById('transactionDate').value;
+            const user = document.getElementById('transactionUser').value.trim();
+
+            if (!title || !amount || !description || !date || !user) {
+                showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
+                return;
+            }
+
+            try {
+                showNotification('Đang lưu giao dịch...', 'info');
+
+                let receiptUrls = [];
+                let transactionId = currentEditingTransaction;
+
+                if (currentEditingTransaction) {
+                    // For existing transaction, keep existing receipts and add new ones
+                    const existingTransaction = transactions[currentEditingTransaction];
+                    receiptUrls = existingTransaction.receipts || [];
+
+                    // Upload new receipts
+                    const newReceiptUrls = await uploadReceiptsToSupabase(currentEditingTransaction);
+                    receiptUrls = [...receiptUrls, ...newReceiptUrls];
+                } else {
+                    // For new transaction, create temporary ID for upload
+                    transactionId = 'temp_' + Date.now();
+                    receiptUrls = await uploadReceiptsToSupabase(transactionId);
+                }
+
+                const transactionData = {
+                    transaction_type: type,
+                    title,
+                    amount,
+                    description,
+                    transaction_date: date,
+                    user_name: user,
+                    icon: type === 'income' ? 'fas fa-arrow-down' : 'fas fa-arrow-up',
+                    receipt_urls: receiptUrls
+                };
+
+                if (currentEditingTransaction) {
+                    // Update existing transaction
+                    const { error } = await supabase
+                        .from('transactions')
+                        .update(transactionData)
+                        .eq('id', currentEditingTransaction);
+
+                    if (error) throw error;
+                    showNotification('Đã cập nhật giao dịch thành công!', 'success');
+                } else {
+                    // Add new transaction
+                    const { data, error } = await supabase
+                        .from('transactions')
+                        .insert([transactionData])
+                        .select();
+
+                    if (error) throw error;
+
+                    // If we uploaded receipts with temp ID, rename them with real transaction ID
+                    if (receiptUrls.length > 0 && data && data[0]) {
+                        const realTransactionId = data[0].id;
+                        const updatedUrls = await renameReceiptFiles(transactionId, realTransactionId, receiptUrls);
+
+                        // Update transaction with correct URLs
+                        await supabase
+                            .from('transactions')
+                            .update({ receipt_urls: updatedUrls })
+                            .eq('id', realTransactionId);
+                    }
+
+                    showNotification('Đã thêm giao dịch thành công!', 'success');
+                }
+
+                // Reset form
+                currentReceiptFiles = [];
+
+                // Reload transactions from database
+                await loadTransactionsFromDB();
+                closeAddTransactionModal();
+
+            } catch (error) {
+                console.error('Error saving transaction:', error);
+                showNotification('Lỗi lưu giao dịch: ' + error.message, 'error');
+            }
+        }
+
+        async function renameReceiptFiles(oldId, newId, urls) {
+            const updatedUrls = [];
+
+            for (const url of urls) {
+                try {
+                    const fileName = url.split('/').pop();
+                    const newFileName = fileName.replace(oldId, newId);
+
+                    // Copy file with new name
+                    const { error: copyError } = await supabase.storage
+                        .from('receipts')
+                        .copy(fileName, newFileName);
+
+                    if (!copyError) {
+                        // Delete old file
+                        await supabase.storage
+                            .from('receipts')
+                            .remove([fileName]);
+
+                        // Get new URL
+                        const { data: urlData } = supabase.storage
+                            .from('receipts')
+                            .getPublicUrl(newFileName);
+
+                        updatedUrls.push(urlData.publicUrl);
+                    } else {
+                        updatedUrls.push(url); // Keep original if rename fails
+                    }
+                } catch (error) {
+                    console.error('Error renaming receipt file:', error);
+                    updatedUrls.push(url); // Keep original if rename fails
+                }
+            }
+
+            return updatedUrls;
+        }
+
+        async function deleteTransaction() {
+            if (!currentEditingTransaction) return;
+
+            if (confirm('Bạn có chắc chắn muốn xóa giao dịch này?')) {
+                try {
+                    const { error } = await supabase
+                        .from('transactions')
+                        .delete()
+                        .eq('id', currentEditingTransaction);
+
+                    if (error) throw error;
+
+                    // Reload transactions from database
+                    await loadTransactionsFromDB();
+                    closeAddTransactionModal();
+                    showNotification('Đã xóa giao dịch thành công!', 'success');
+
+                } catch (error) {
+                    console.error('Error deleting transaction:', error);
+                    showNotification('Lỗi xóa giao dịch: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function refreshTransactionList() {
+            // Group transactions by date
+            const groupedTransactions = {};
+            Object.values(transactions).forEach(transaction => {
+                const date = new Date(transaction.date).toLocaleDateString('vi-VN');
+                if (!groupedTransactions[date]) {
+                    groupedTransactions[date] = [];
+                }
+                groupedTransactions[date].push(transaction);
+            });
+
+            // Sort dates descending
+            const sortedDates = Object.keys(groupedTransactions).sort((a, b) =>
+                new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'))
+            );
+
+            const transactionList = document.getElementById('transactionList');
+            transactionList.innerHTML = sortedDates.map(date => `
+                <div class="transaction-date-group">
+                    <div class="date-header">${date}</div>
+                    ${groupedTransactions[date].map(transaction => `
+                        <div class="transaction-item ${transaction.type}">
+                            <div class="transaction-icon ${transaction.type}">
+                                <i class="${transaction.icon}"></i>
+                            </div>
+                            <div class="transaction-info" onclick="openTransactionDetail('${transaction.id}')">
+                                <div class="transaction-title">${transaction.title}</div>
+                                <div class="transaction-subtitle">${transaction.description}</div>
+                            </div>
+                            <div class="transaction-amount ${transaction.type}">
+                                ${transaction.type === 'income' ? '+' : '-'} ${transaction.amount.toLocaleString()}
+                            </div>
+                            <div class="transaction-actions">
+                                <button class="edit-transaction-btn" onclick="editTransaction('${transaction.id}')" title="Chỉnh sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            // Update transaction summary
+            updateTransactionSummary();
+        }
+
+        // Update account balance based on transactions and penalties
+        async function updateAccountBalance() {
+            try {
+                let balance = 0;
+
+                // Calculate from transactions
+                Object.values(transactions).forEach(transaction => {
+                    if (transaction.type === 'income') {
+                        balance += transaction.amount;
+                    } else {
+                        balance -= transaction.amount;
+                    }
+                });
+
+                // Add base amount (existing fund before app)
+                balance += 3000000; // Base fund amount
+
+                console.log('💰 Account balance calculation:', {
+                    transactions: Object.keys(transactions).length,
+                    totalBalance: balance,
+                    formatted: balance.toLocaleString()
+                });
+
+                // Update header balance
+                const headerElement = document.getElementById('accountBalance');
+                if (headerElement) {
+                    headerElement.textContent = `VNĐ ${balance.toLocaleString()}`;
+                    console.log('✅ Updated header balance:', headerElement.textContent);
+                }
+
+                console.log('💰 Balance updated successfully:', balance.toLocaleString(), 'VNĐ');
+
+                return balance;
+
+            } catch (error) {
+                console.error('Error updating account balance:', error);
+                // Fallback to basic calculation
+                document.getElementById('accountBalance').textContent = `VNĐ 3.000.000`;
+            }
+        }
+
+        // Receipt Upload Management
+        let currentReceiptFiles = [];
+
+        function handleReceiptUpload(event) {
+            const files = Array.from(event.target.files);
+            const previewContainer = document.getElementById('receiptPreview');
+
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'receipt-preview-item';
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Receipt preview">
+                            <button class="remove-receipt" onclick="removeReceiptPreview(this, '${file.name}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        previewContainer.appendChild(previewItem);
+
+                        // Store file for upload
+                        currentReceiptFiles.push({
+                            file: file,
+                            preview: e.target.result,
+                            name: file.name
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function removeReceiptPreview(button, fileName) {
+            // Remove from preview
+            button.parentElement.remove();
+
+            // Remove from files array
+            currentReceiptFiles = currentReceiptFiles.filter(item => item.name !== fileName);
+        }
+
+        async function uploadReceiptsToSupabase(transactionId) {
+            if (currentReceiptFiles.length === 0) return [];
+
+            const uploadedUrls = [];
+
+            try {
+                for (const receiptFile of currentReceiptFiles) {
+                    const fileName = `${transactionId}_${Date.now()}_${receiptFile.file.name}`;
+
+                    const { data, error } = await supabase.storage
+                        .from('receipts')
+                        .upload(fileName, receiptFile.file);
+
+                    if (error) {
+                        console.error('Error uploading receipt:', error);
+                        continue;
+                    }
+
+                    // Get public URL
+                    const { data: urlData } = supabase.storage
+                        .from('receipts')
+                        .getPublicUrl(fileName);
+
+                    uploadedUrls.push(urlData.publicUrl);
+                }
+
+                return uploadedUrls;
+
+            } catch (error) {
+                console.error('Error uploading receipts:', error);
+                showNotification('Lỗi upload ảnh: ' + error.message, 'error');
+                return [];
+            }
+        }
+
+        async function createReceiptsBucket() {
+            try {
+                // Check if bucket already exists
+                const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+
+                if (listError) {
+                    console.error('Error listing buckets:', listError);
+                    console.log('📋 Please ensure "receipts" bucket exists in Supabase Dashboard');
+                    return;
+                }
+
+                const bucketExists = buckets.some(bucket => bucket.id === 'receipts');
+
+                if (bucketExists) {
+                    console.log('✅ Receipts bucket already exists');
+                    return;
+                }
+
+                // Try to create bucket only if it doesn't exist
+                console.log('📦 Bucket not found, attempting to create...');
+                const { data, error } = await supabase.storage.createBucket('receipts', {
+                    public: true
+                });
+
+                if (error) {
+                    console.warn('⚠️ Could not create bucket via API:', error.message);
+                    console.log('📋 Please create "receipts" bucket manually in Supabase Dashboard');
+                    console.log('🔧 Dashboard: Storage → New bucket → Name: "receipts" → Public: ✅');
+                } else {
+                    console.log('✅ Receipts bucket created successfully');
+                }
+
+            } catch (error) {
+                console.warn('Warning with receipts bucket:', error.message);
+                console.log('📋 Please ensure "receipts" bucket exists in Supabase Dashboard');
+            }
+        }
+
+        // Update openAddTransactionModal to reset receipts
+        function openAddTransactionModal() {
+            if (!authenticateAdmin()) return;
+
+            currentEditingTransaction = null;
+            currentReceiptFiles = [];
+            document.getElementById('transactionModalTitle').textContent = 'Thêm giao dịch';
+            document.getElementById('deleteTransactionBtn').style.display = 'none';
+
+            // Reset form
+            document.getElementById('transactionType').value = 'expense';
+            document.getElementById('transactionTitle').value = '';
+            document.getElementById('transactionAmount').value = '';
+            document.getElementById('transactionDescription').value = '';
+            document.getElementById('transactionDate').value = new Date().toISOString().slice(0, 16);
+            document.getElementById('transactionUser').value = 'Admin';
+            document.getElementById('receiptPreview').innerHTML = '';
+
+            document.getElementById('addTransactionModal').classList.add('show');
+        }
+
+        // Update editTransaction to load existing receipts
+        function editTransaction(transactionId) {
+            if (!authenticateAdmin()) return;
+
+            const transaction = transactions[transactionId];
+            if (!transaction) return;
+
+            currentEditingTransaction = transactionId;
+            currentReceiptFiles = [];
+            document.getElementById('transactionModalTitle').textContent = 'Chỉnh sửa giao dịch';
+            document.getElementById('deleteTransactionBtn').style.display = 'flex';
+
+            // Fill form with existing data
+            document.getElementById('transactionType').value = transaction.type;
+            document.getElementById('transactionTitle').value = transaction.title;
+            document.getElementById('transactionAmount').value = transaction.amount;
+            document.getElementById('transactionDescription').value = transaction.description;
+
+            // Fix datetime format for input field
+            let dateValue = transaction.date;
+            if (dateValue) {
+                // Convert to local datetime format (YYYY-MM-DDTHH:MM)
+                const date = new Date(dateValue);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                dateValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+            document.getElementById('transactionDate').value = dateValue;
+            document.getElementById('transactionUser').value = transaction.user;
+
+            // Load existing receipts
+            const previewContainer = document.getElementById('receiptPreview');
+            previewContainer.innerHTML = '';
+
+            if (transaction.receipts && transaction.receipts.length > 0) {
+                transaction.receipts.forEach((url, index) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'receipt-preview-item';
+                    previewItem.innerHTML = `
+                        <img src="${url}" alt="Existing receipt">
+                        <button class="remove-receipt" onclick="removeExistingReceipt(this, '${url}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    previewContainer.appendChild(previewItem);
+                });
+            }
+
+            document.getElementById('addTransactionModal').classList.add('show');
+        }
+
+        function removeExistingReceipt(button, url) {
+            button.parentElement.remove();
+
+            // Remove from transaction receipts
+            if (currentEditingTransaction && transactions[currentEditingTransaction]) {
+                transactions[currentEditingTransaction].receipts =
+                    transactions[currentEditingTransaction].receipts.filter(receiptUrl => receiptUrl !== url);
+            }
+        }
+
+
+
+        // Penalty Management Functions
+        async function resetPenalties() {
+            // Authenticate admin
+            const password = prompt('Nhập mật khẩu admin để reset danh sách phạt:');
+            if (password !== '111') {
+                showNotification('Mật khẩu không đúng!', 'error');
+                return;
+            }
+
+            try {
+                // Get unpaid penalties to calculate total
+                const { data: unpaidPenalties, error: fetchError } = await supabase
+                    .from('penalties')
+                    .select('*')
+                    .eq('is_paid', false);
+
+                if (fetchError) {
+                    console.error('Error fetching penalties:', fetchError);
+                    showNotification('Lỗi tải danh sách phạt: ' + fetchError.message, 'error');
+                    return;
+                }
+
+                if (!unpaidPenalties || unpaidPenalties.length === 0) {
+                    showNotification('Không có phạt nào cần reset!', 'warning');
+                    return;
+                }
+
+                const totalPenaltyAmount = unpaidPenalties.reduce((sum, penalty) => sum + (penalty.amount || 50000), 0);
+                const penaltyList = unpaidPenalties.map(p => `• ${p.player_name}: ${(p.amount || 50000).toLocaleString()} VNĐ`).join('\n');
+
+                // Confirm with detailed info
+                const confirmReset = confirm(
+                    `⚠️ RESET DANH SÁCH PHẠT\n\n` +
+                    `📋 Danh sách cần thanh toán:\n${penaltyList}\n\n` +
+                    `💰 Tổng cộng: ${totalPenaltyAmount.toLocaleString()} VNĐ\n\n` +
+                    `❗ CHỈ RESET KHI ĐÃ THU ĐỦ TIỀN THẬT!\n\n` +
+                    `✅ Xác nhận đã thu đủ ${totalPenaltyAmount.toLocaleString()} VNĐ?`
+                );
+
+                if (!confirmReset) return;
+
+                // Double confirm
+                const doubleConfirm = confirm(
+                    `🔴 XÁC NHẬN LẦN CUỐI:\n\n` +
+                    `Bạn đã thực sự thu được ${totalPenaltyAmount.toLocaleString()} VNĐ tiền phạt?\n\n` +
+                    `Reset sẽ xóa danh sách và ghi nhận giao dịch thu tiền.`
+                );
+
+                if (!doubleConfirm) return;
+
+                showNotification('Đang reset danh sách phạt...', 'info');
+
+                // Mark all unpaid penalties as paid
+                const { error: updateError } = await supabase
+                    .from('penalties')
+                    .update({
+                        is_paid: true,
+                        paid_date: new Date().toISOString()
+                    })
+                    .eq('is_paid', false);
+
+                if (updateError) {
+                    console.error('Error updating penalties:', updateError);
+                    showNotification('Lỗi cập nhật phạt: ' + updateError.message, 'error');
+                    return;
+                }
+
+                // Create income transaction for the collected penalty money
+                const penaltyTransaction = {
+                    transaction_type: 'income',
+                    title: 'Thu tiền phạt trận thua',
+                    amount: totalPenaltyAmount,
+                    description: `Thu tiền phạt từ ${unpaidPenalties.length} người - ${totalPenaltyAmount.toLocaleString()} VNĐ`,
+                    transaction_date: new Date().toISOString(),
+                    user_name: 'Admin',
+                    icon: 'fas fa-hand-holding-usd'
+                };
+
+                const { error: transactionError } = await supabase
+                    .from('transactions')
+                    .insert([penaltyTransaction]);
+
+                if (transactionError) {
+                    console.error('Error adding penalty transaction:', transactionError);
+                    showNotification('Lỗi tạo giao dịch: ' + transactionError.message, 'error');
+                    return;
+                }
+
+                // Reload data
+                await loadPenalties();
+                await loadTransactionsFromDB();
+                await updateAccountBalance();
+
+                // Show success message
+                showNotification(
+                    `✅ Reset thành công!\n💰 Đã ghi nhận thu ${totalPenaltyAmount.toLocaleString()} VNĐ tiền phạt`,
+                    'success'
+                );
+
+                // Log the action
+                console.log(`🔄 Penalty reset completed:`, {
+                    timestamp: new Date().toISOString(),
+                    totalAmount: totalPenaltyAmount,
+                    penaltiesCount: unpaidPenalties.length,
+                    action: 'reset_penalties'
+                });
+
+            } catch (error) {
+                console.error('Error resetting penalties:', error);
+                showNotification('Lỗi reset danh sách phạt: ' + error.message, 'error');
+            }
+        }
+
+        // Load penalties from database
+        async function loadPenalties() {
+            try {
+                const { data, error } = await supabase
+                    .from('penalties')
+                    .select('*')
+                    .eq('is_paid', false)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading penalties:', error);
+                    // Show sample penalties if database not available
+                    showSamplePenalties();
+                    return;
+                }
+
+                const penaltiesList = document.getElementById('penaltiesList');
+                if (!penaltiesList) return;
+
+                if (data && data.length > 0) {
+                    penaltiesList.innerHTML = data.map(penalty => `
+                        <div class="penalty-item">
+                            <div class="penalty-info">
+                                <input type="checkbox" class="penalty-checkbox"
+                                       onchange="togglePenaltyPayment('${penalty.id}', this.checked)">
+                                <span class="penalty-player unpaid">${penalty.player_name}</span>
+                            </div>
+                            <div class="penalty-amount unpaid">${(penalty.amount || 50000).toLocaleString()} VNĐ</div>
+                        </div>
+                    `).join('');
+                } else {
+                    penaltiesList.innerHTML = `
+                        <div class="no-penalties">
+                            <i class="fas fa-check-circle" style="color: #27ae60; font-size: 24px; margin-bottom: 8px;"></i>
+                            <div style="color: #27ae60; font-weight: 600;">Không có phạt nào!</div>
+                            <div style="font-size: 12px; margin-top: 4px;">Tất cả đã thanh toán</div>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Error loading penalties:', error);
+                showSamplePenalties();
+            }
+        }
+
+        function showSamplePenalties() {
+            const penaltiesList = document.getElementById('penaltiesList');
+            if (!penaltiesList) return;
+
+            // Show sample data if database not available
+            penaltiesList.innerHTML = `
+                <div class="penalty-item">
+                    <div class="penalty-info">
+                        <input type="checkbox" class="penalty-checkbox">
+                        <span class="penalty-player unpaid">Nguyễn Văn A</span>
+                    </div>
+                    <div class="penalty-amount unpaid">50.000 VNĐ</div>
+                </div>
+                <div class="penalty-item">
+                    <div class="penalty-info">
+                        <input type="checkbox" class="penalty-checkbox">
+                        <span class="penalty-player unpaid">Trần Thị B</span>
+                    </div>
+                    <div class="penalty-amount unpaid">50.000 VNĐ</div>
+                </div>
+            `;
+        }
+
+        async function togglePenaltyPayment(penaltyId, isPaid) {
+            try {
+                const { error } = await supabase
+                    .from('penalties')
+                    .update({
+                        is_paid: isPaid,
+                        paid_date: isPaid ? new Date().toISOString() : null
+                    })
+                    .eq('id', penaltyId);
+
+                if (error) {
+                    console.error('Error updating penalty:', error);
+                    return;
+                }
+
+                // Reload penalties list
+                await loadPenalties();
+
+                if (isPaid) {
+                    showNotification('Đã đánh dấu thanh toán', 'success');
+                }
+
+            } catch (error) {
+                console.error('Error toggling penalty payment:', error);
+            }
+        }
+
+        // Auto Setup Functions
+        function openAutoSetupModal() {
+            // Authenticate admin
+            const password = prompt('Nhập mật khẩu admin để truy cập Auto Setup:');
+            if (password !== '111') {
+                showNotification('Mật khẩu không đúng!', 'error');
+                return;
+            }
+
+            // Reset setup state
+            resetSetupState();
+            document.getElementById('autoSetupModal').classList.add('show');
+        }
+
+        function closeAutoSetupModal() {
+            document.getElementById('autoSetupModal').classList.remove('show');
+        }
+
+        function resetSetupState() {
+            const items = ['setupTransactions', 'setupPenalties', 'setupStorage', 'setupSampleData'];
+            items.forEach(itemId => {
+                const item = document.getElementById(itemId);
+                if (item) {
+                    item.querySelector('.setup-loading').style.display = 'none';
+                    item.querySelector('.setup-pending').style.display = 'inline';
+                    item.querySelector('.setup-success').style.display = 'none';
+                    item.querySelector('.setup-error').style.display = 'none';
+                }
+            });
+
+            document.getElementById('setupProgressFill').style.width = '0%';
+            document.getElementById('setupProgressText').textContent = 'Sẵn sàng để bắt đầu';
+            document.getElementById('startSetupBtn').disabled = false;
+            document.getElementById('startSetupBtn').innerHTML = '<i class="fas fa-magic"></i> Bắt đầu Setup';
+        }
+
+        async function startAutoSetup() {
+            const startBtn = document.getElementById('startSetupBtn');
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang setup...';
+
+            let progress = 0;
+            const totalSteps = 4;
+
+            try {
+                // Step 1: Create Transactions Table
+                await updateSetupStep('setupTransactions', 'loading', 'Đang tạo bảng Transactions...');
+                await createTransactionsTableAuto();
+                await updateSetupStep('setupTransactions', 'success');
+                progress = 25;
+                updateProgress(progress, 'Đã tạo bảng Transactions');
+
+                // Step 2: Create Penalties Table
+                await updateSetupStep('setupPenalties', 'loading', 'Đang tạo bảng Penalties...');
+                await createPenaltiesTableAuto();
+                await updateSetupStep('setupPenalties', 'success');
+                progress = 50;
+                updateProgress(progress, 'Đã tạo bảng Penalties');
+
+                // Step 3: Create Storage Bucket
+                await updateSetupStep('setupStorage', 'loading', 'Đang tạo Storage Bucket...');
+                await createStorageBucketAuto();
+                await updateSetupStep('setupStorage', 'success');
+                progress = 75;
+                updateProgress(progress, 'Đã tạo Storage Bucket');
+
+                // Step 4: Insert Sample Data
+                await updateSetupStep('setupSampleData', 'loading', 'Đang thêm dữ liệu mẫu...');
+                await insertSampleDataAuto();
+                await updateSetupStep('setupSampleData', 'success');
+                progress = 100;
+                updateProgress(progress, '🎉 Setup hoàn tất!');
+
+                // Success
+                startBtn.innerHTML = '<i class="fas fa-check"></i> Hoàn thành!';
+                showNotification('🎉 Auto Setup thành công! Database đã sẵn sàng.', 'success');
+
+                // Reload data
+                setTimeout(async () => {
+                    await loadTransactionsFromDB();
+                    await loadPenalties();
+                    closeAutoSetupModal();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Auto Setup failed:', error);
+                showNotification('❌ Auto Setup thất bại: ' + error.message, 'error');
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<i class="fas fa-redo"></i> Thử lại';
+            }
+        }
+
+        async function updateSetupStep(stepId, status, message = '') {
+            const step = document.getElementById(stepId);
+            if (!step) return;
+
+            // Hide all status icons
+            step.querySelector('.setup-loading').style.display = 'none';
+            step.querySelector('.setup-pending').style.display = 'none';
+            step.querySelector('.setup-success').style.display = 'none';
+            step.querySelector('.setup-error').style.display = 'none';
+
+            // Show appropriate status
+            if (status === 'loading') {
+                step.querySelector('.setup-loading').style.display = 'inline';
+            } else if (status === 'success') {
+                step.querySelector('.setup-success').style.display = 'inline';
+            } else if (status === 'error') {
+                step.querySelector('.setup-error').style.display = 'inline';
+            }
+
+            if (message) {
+                document.getElementById('setupProgressText').textContent = message;
+            }
+
+            // Small delay for visual effect
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+        function updateProgress(percentage, message) {
+            document.getElementById('setupProgressFill').style.width = percentage + '%';
+            document.getElementById('setupProgressText').textContent = message;
+        }
+
+        async function createTransactionsTableAuto() {
+            try {
+                // Call RPC function to create transactions table
+                const { data, error } = await supabase.rpc('create_transactions_table');
+
+                if (error) {
+                    throw new Error('Lỗi tạo bảng transactions: ' + error.message);
+                }
+
+                if (data && !data.success) {
+                    throw new Error(data.message);
+                }
+
+                console.log('✅ Transactions table created/verified:', data.message);
+                return true;
+
+            } catch (error) {
+                console.error('Error creating transactions table:', error);
+                throw error;
+            }
+        }
+
+        async function createPenaltiesTableAuto() {
+            try {
+                // Call RPC function to create penalties table
+                const { data, error } = await supabase.rpc('create_penalties_table');
+
+                if (error) {
+                    throw new Error('Lỗi tạo bảng penalties: ' + error.message);
+                }
+
+                if (data && !data.success) {
+                    throw new Error(data.message);
+                }
+
+                console.log('✅ Penalties table created/verified:', data.message);
+                return true;
+
+            } catch (error) {
+                console.error('Error creating penalties table:', error);
+                throw error;
+            }
+        }
+
+        async function createStorageBucketAuto() {
+            try {
+                // Check if bucket exists
+                const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+
+                if (listError) {
+                    console.warn('Cannot list buckets:', listError.message);
+                    // Assume bucket exists and continue
+                    console.log('✅ Assuming receipts bucket exists');
+                    return true;
+                }
+
+                const bucketExists = buckets.some(bucket => bucket.id === 'receipts');
+
+                if (bucketExists) {
+                    console.log('✅ Receipts bucket already exists');
+                    return true;
+                }
+
+                // Try to create bucket only if it doesn't exist
+                console.log('📦 Attempting to create receipts bucket...');
+                const { data, error } = await supabase.storage.createBucket('receipts', {
+                    public: true
+                });
+
+                if (error) {
+                    console.warn('Cannot create bucket via API:', error.message);
+                    console.log('📋 Please create "receipts" bucket manually in Supabase Dashboard');
+                    // Don't throw error, just warn and continue
+                    return true;
+                }
+
+                console.log('✅ Created receipts bucket successfully');
+                return true;
+
+            } catch (error) {
+                console.warn('Storage bucket warning:', error.message);
+                // Don't fail the entire setup for storage issues
+                return true;
+            }
+        }
+
+        async function insertSampleDataAuto() {
+            try {
+                // Call RPC function to insert sample data
+                const { data, error } = await supabase.rpc('insert_sample_data');
+
+                if (error) {
+                    throw new Error('Lỗi thêm dữ liệu mẫu: ' + error.message);
+                }
+
+                if (data && !data.success) {
+                    throw new Error(data.message);
+                }
+
+                console.log('✅ Sample data inserted:', data.message);
+                console.log('📊 Transactions inserted:', data.transactions_inserted || 0);
+                console.log('🚫 Penalties inserted:', data.penalties_inserted || 0);
+                return true;
+
+            } catch (error) {
+                console.error('Error inserting sample data:', error);
+                throw error;
+            }
+        }
+
+        // Complete Auto Setup (1-Click)
+        async function runCompleteAutoSetup() {
+            const completeBtn = document.getElementById('completeSetupBtn');
+            const stepBtn = document.getElementById('startSetupBtn');
+
+            completeBtn.disabled = true;
+            stepBtn.disabled = true;
+            completeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang setup...';
+
+            try {
+                // Update all steps to loading
+                const items = ['setupTransactions', 'setupPenalties', 'setupStorage', 'setupSampleData'];
+                items.forEach(itemId => {
+                    updateSetupStep(itemId, 'loading');
+                });
+
+                updateProgress(10, 'Bắt đầu Auto Setup hoàn chỉnh...');
+
+                // Call the complete auto setup RPC function
+                const { data, error } = await supabase.rpc('run_auto_setup');
+
+                if (error) {
+                    throw new Error('RPC Error: ' + error.message);
+                }
+
+                if (!data.success) {
+                    throw new Error(data.message);
+                }
+
+                // Update progress based on results
+                updateProgress(25, 'Đã tạo bảng Transactions');
+                await updateSetupStep('setupTransactions', 'success');
+
+                updateProgress(50, 'Đã tạo bảng Penalties');
+                await updateSetupStep('setupPenalties', 'success');
+
+                // Handle storage separately (JavaScript API)
+                updateProgress(60, 'Đang kiểm tra Storage Bucket...');
+                try {
+                    await createStorageBucketAuto();
+                    await updateSetupStep('setupStorage', 'success');
+                    updateProgress(75, 'Storage Bucket sẵn sàng');
+                } catch (storageError) {
+                    console.warn('Storage setup warning:', storageError);
+                    await updateSetupStep('setupStorage', 'error');
+                    updateProgress(75, 'Storage cần tạo thủ công (xem hướng dẫn)');
+
+                    // Show specific storage instruction
+                    setTimeout(() => {
+                        showNotification(
+                            '⚠️ Cần tạo bucket "receipts" thủ công trong Supabase Dashboard → Storage',
+                            'warning'
+                        );
+                    }, 1000);
+                }
+
+                updateProgress(90, 'Đã thêm dữ liệu mẫu');
+                await updateSetupStep('setupSampleData', 'success');
+
+                updateProgress(100, '🎉 Setup hoàn chỉnh thành công!');
+
+                // Success
+                completeBtn.innerHTML = '<i class="fas fa-check"></i> Hoàn thành!';
+
+                // Check if storage had issues
+                const storageStep = document.getElementById('setupStorage');
+                const hasStorageError = storageStep && storageStep.querySelector('.setup-error').style.display !== 'none';
+
+                if (hasStorageError) {
+                    showNotification(
+                        '🎉 Database Setup thành công! ⚠️ Cần tạo bucket "receipts" thủ công để upload ảnh.',
+                        'success'
+                    );
+                } else {
+                    showNotification('🎉 Auto Setup hoàn chỉnh thành công! Database đã sẵn sàng 100%.', 'success');
+                }
+
+                // Show detailed results
+                console.log('🎯 Complete Auto Setup Results:', data);
+                if (data.steps) {
+                    console.log('📊 Transactions:', data.steps.transactions?.message);
+                    console.log('🚫 Penalties:', data.steps.penalties?.message);
+                    console.log('📁 Storage:', data.steps.storage?.message);
+                    console.log('📋 Sample Data:', data.steps.sample_data?.message);
+                }
+
+                // Reload data
+                setTimeout(async () => {
+                    await loadTransactionsFromDB();
+                    await loadPenalties();
+                    closeAutoSetupModal();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Complete Auto Setup failed:', error);
+
+                // Mark failed steps
+                const items = ['setupTransactions', 'setupPenalties', 'setupStorage', 'setupSampleData'];
+                items.forEach(itemId => {
+                    const step = document.getElementById(itemId);
+                    if (step && step.querySelector('.setup-loading').style.display !== 'none') {
+                        updateSetupStep(itemId, 'error');
+                    }
+                });
+
+                showNotification('❌ Auto Setup thất bại: ' + error.message, 'error');
+                completeBtn.disabled = false;
+                stepBtn.disabled = false;
+                completeBtn.innerHTML = '<i class="fas fa-redo"></i> Thử lại';
+                updateProgress(0, 'Setup thất bại - Thử lại');
+            }
+        }
+
+        // Test storage bucket functionality
+        async function testStorageBucket() {
+            try {
+                // Try to list objects in receipts bucket
+                const { data, error } = await supabase.storage
+                    .from('receipts')
+                    .list('', { limit: 1 });
+
+                if (error) {
+                    console.warn('Storage test failed:', error.message);
+                    showNotification('⚠️ Bucket "receipts" cần được tạo trong Supabase Dashboard', 'warning');
+                    return false;
+                }
+
+                console.log('✅ Storage bucket "receipts" is working correctly');
+                return true;
+
+            } catch (error) {
+                console.warn('Storage test error:', error.message);
+                return false;
+            }
+        }
+
+        // Test storage upload with a small file
+        async function testStorageUpload() {
+            try {
+                showNotification('🧪 Đang test Storage upload...', 'info');
+
+                // Create a small test file
+                const testContent = 'Test file for storage upload';
+                const testFile = new Blob([testContent], { type: 'text/plain' });
+                const fileName = `test_${Date.now()}.txt`;
+
+                // Try to upload
+                const { data, error } = await supabase.storage
+                    .from('receipts')
+                    .upload(fileName, testFile);
+
+                if (error) {
+                    console.error('Upload test failed:', error);
+
+                    if (error.statusCode === '403' || error.message.includes('row-level security')) {
+                        showNotification('🔒 Storage RLS Policy lỗi! Cần chạy file fix_storage_policies.sql', 'error');
+                        console.log('📋 Fix: Chạy file fix_storage_policies.sql trong Supabase SQL Editor');
+                        console.log('🔧 Hoặc: Storage → receipts bucket → Configuration → Policies');
+                    } else if (error.message.includes('not found')) {
+                        showNotification('⚠️ Bucket "receipts" chưa tồn tại. Vui lòng tạo trong Supabase Dashboard.', 'warning');
+                    } else {
+                        showNotification('❌ Upload test thất bại: ' + error.message, 'error');
+                    }
+                    return false;
+                }
+
+                console.log('✅ Upload test successful:', data);
+                showNotification('✅ Storage upload hoạt động hoàn hảo!', 'success');
+
+                // Clean up test file
+                setTimeout(async () => {
+                    try {
+                        await supabase.storage
+                            .from('receipts')
+                            .remove([fileName]);
+                        console.log('🗑️ Cleaned up test file');
+                    } catch (cleanupError) {
+                        console.warn('Could not clean up test file:', cleanupError);
+                    }
+                }, 2000);
+
+                return true;
+
+            } catch (error) {
+                console.error('Storage upload test error:', error);
+                showNotification('❌ Storage test lỗi: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        // Fix storage policies
+        async function fixStoragePolicies() {
+            const password = prompt('Nhập mật khẩu admin để fix Storage policies:');
+            if (password !== '111') {
+                showNotification('Mật khẩu không đúng!', 'error');
+                return;
+            }
+
+            try {
+                showNotification('🔧 Đang fix Storage policies...', 'info');
+
+                // Show instructions for manual fix
+                const instructions = `
+🔧 FIX STORAGE POLICIES:
+
+1. Vào Supabase Dashboard → SQL Editor
+2. Chạy file: fix_storage_policies.sql
+3. Hoặc chạy SQL này:
+
+-- Allow public upload
+CREATE POLICY "Public upload access for receipts"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'receipts');
+
+-- Allow public read
+CREATE POLICY "Public read access for receipts"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'receipts');
+
+4. Sau đó test lại nút 🌩️
+                `;
+
+                console.log(instructions);
+
+                // Try to test storage after showing instructions
+                setTimeout(async () => {
+                    const testResult = await testStorageUpload();
+                    if (testResult) {
+                        showNotification('✅ Storage policies đã được fix!', 'success');
+                    } else {
+                        showNotification('⚠️ Vui lòng chạy file fix_storage_policies.sql trong Supabase', 'warning');
+                    }
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error fixing storage policies:', error);
+                showNotification('❌ Lỗi fix policies: ' + error.message, 'error');
+            }
+        }
+
+        // Check if setup is complete and hide setup buttons
+        async function checkSetupComplete() {
+            try {
+                // Check if tables exist and have data
+                const { data: transactions } = await supabase
+                    .from('transactions')
+                    .select('id')
+                    .limit(1);
+
+                const { data: penalties } = await supabase
+                    .from('penalties')
+                    .select('id')
+                    .limit(1);
+
+                // Check if storage works
+                const { data: storageTest } = await supabase.storage
+                    .from('receipts')
+                    .list('', { limit: 1 });
+
+                const setupComplete = transactions && penalties && storageTest;
+
+                if (setupComplete) {
+                    console.log('✅ Setup is complete - hiding setup buttons');
+                    hideSetupButtons();
+                } else {
+                    console.log('⚠️ Setup incomplete - showing setup buttons');
+                    showSetupButtons();
+                }
+
+                return setupComplete;
+
+            } catch (error) {
+                console.log('⚠️ Setup check failed - showing setup buttons');
+                showSetupButtons();
+                return false;
+            }
+        }
+
+        function hideSetupButtons() {
+            const setupButtons = [
+                document.querySelector('.test-storage-btn'),
+                document.querySelector('.fix-storage-btn'),
+                document.querySelector('.auto-setup-btn')
+            ];
+
+            setupButtons.forEach(btn => {
+                if (btn) {
+                    btn.style.display = 'none';
+                }
+            });
+
+            // Add a small indicator that setup is complete
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions && !document.querySelector('.setup-complete-indicator')) {
+                const indicator = document.createElement('div');
+                indicator.className = 'setup-complete-indicator';
+                indicator.innerHTML = '<i class="fas fa-check-circle" style="color: #27ae60; font-size: 16px;" title="Setup hoàn tất"></i>';
+                headerActions.insertBefore(indicator, headerActions.firstChild);
+            }
+
+            // Show the "Show Setup" button for admin access
+            const showSetupBtn = document.querySelector('.show-setup-btn');
+            if (showSetupBtn) {
+                showSetupBtn.style.display = 'flex';
+            }
+        }
+
+        function showSetupButtons() {
+            const setupButtons = [
+                document.querySelector('.test-storage-btn'),
+                document.querySelector('.fix-storage-btn'),
+                document.querySelector('.auto-setup-btn')
+            ];
+
+            setupButtons.forEach(btn => {
+                if (btn) {
+                    btn.style.display = 'flex';
+                }
+            });
+
+            // Remove setup complete indicator
+            const indicator = document.querySelector('.setup-complete-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+
+            // Hide the "Show Setup" button
+            const showSetupBtn = document.querySelector('.show-setup-btn');
+            if (showSetupBtn) {
+                showSetupBtn.style.display = 'none';
+            }
+        }
+
+        // Force show setup buttons (for admin debugging)
+        function forceShowSetupButtons() {
+            const password = prompt('Nhập mật khẩu admin để hiện setup buttons:');
+            if (password !== '111') {
+                showNotification('Mật khẩu không đúng!', 'error');
+                return;
+            }
+
+            showSetupButtons();
+            showNotification('✅ Setup buttons đã được hiện lại', 'success');
+            console.log('🔧 Setup buttons forced to show for debugging');
+        }
+
+        // Check fund breakdown for debugging
+        async function checkFundBreakdown() {
+            try {
+                console.log('💰 FUND BREAKDOWN ANALYSIS:');
+
+                // Analyze transactions
+                let incomeTotal = 0;
+                let expenseTotal = 0;
+                let penaltyIncome = 0;
+
+                Object.values(transactions).forEach(transaction => {
+                    if (transaction.type === 'income') {
+                        incomeTotal += transaction.amount;
+                        if (transaction.title.includes('phạt')) {
+                            penaltyIncome += transaction.amount;
+                        }
+                    } else {
+                        expenseTotal += transaction.amount;
+                    }
+                });
+
+                const netFromTransactions = incomeTotal - expenseTotal;
+                const baseFund = 3000000;
+                const totalBalance = baseFund + netFromTransactions;
+
+                console.log('📊 Breakdown:');
+                console.log('  💵 Base fund (before app):', baseFund.toLocaleString(), 'VNĐ');
+                console.log('  📈 Total income:', incomeTotal.toLocaleString(), 'VNĐ');
+                console.log('    🚫 From penalties:', penaltyIncome.toLocaleString(), 'VNĐ');
+                console.log('  📉 Total expenses:', expenseTotal.toLocaleString(), 'VNĐ');
+                console.log('  🧮 Net from transactions:', netFromTransactions.toLocaleString(), 'VNĐ');
+                console.log('  💰 TOTAL BALANCE:', totalBalance.toLocaleString(), 'VNĐ');
+
+                // Check unpaid penalties
+                const { data: unpaidPenalties } = await supabase
+                    .from('penalties')
+                    .select('amount')
+                    .eq('is_paid', false);
+
+                if (unpaidPenalties && unpaidPenalties.length > 0) {
+                    const unpaidTotal = unpaidPenalties.reduce((sum, p) => sum + (p.amount || 50000), 0);
+                    console.log('  ⏳ Unpaid penalties:', unpaidTotal.toLocaleString(), 'VNĐ');
+                    console.log('  🎯 Potential total if all paid:', (totalBalance + unpaidTotal).toLocaleString(), 'VNĐ');
+                }
+
+                return {
+                    baseFund,
+                    incomeTotal,
+                    expenseTotal,
+                    penaltyIncome,
+                    totalBalance,
+                    unpaidPenalties: unpaidPenalties?.length || 0
+                };
+
+            } catch (error) {
+                console.error('Error checking fund breakdown:', error);
+                return null;
+            }
+        }
+
+        // Force update all balance displays
+        async function forceUpdateAllBalances() {
+            console.log('🔄 Force updating all balance displays...');
+
+            try {
+                // Recalculate balance
+                await updateAccountBalance();
+
+                // Double check header balance
+                setTimeout(() => {
+                    const headerBalance = document.getElementById('accountBalance');
+
+                    if (headerBalance) {
+                        const headerText = headerBalance.textContent;
+                        console.log('💰 Current header balance:', headerText);
+                        console.log('✅ Balance display updated');
+                    } else {
+                        console.warn('⚠️ Header balance element not found');
+                    }
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error in force update:', error);
+            }
+        }
+
+        // Transaction History Toggle
+        function toggleTransactionHistory() {
+            const transactionList = document.getElementById('transactionList');
+            const expandIcon = document.getElementById('expandIcon');
+            const expandBtn = document.querySelector('.expand-transactions-btn');
+
+            if (transactionList.classList.contains('collapsed')) {
+                // Expand
+                transactionList.classList.remove('collapsed');
+                expandIcon.classList.remove('fa-chevron-down');
+                expandIcon.classList.add('fa-chevron-up');
+                expandBtn.classList.add('expanded');
+                expandBtn.title = 'Thu gọn';
+            } else {
+                // Collapse
+                transactionList.classList.add('collapsed');
+                expandIcon.classList.remove('fa-chevron-up');
+                expandIcon.classList.add('fa-chevron-down');
+                expandBtn.classList.remove('expanded');
+                expandBtn.title = 'Mở rộng';
+            }
+        }
+
+        // Update transaction summary
+        function updateTransactionSummary() {
+            try {
+                let totalCount = 0;
+                let totalIncome = 0;
+                let totalExpense = 0;
+
+                Object.values(transactions).forEach(transaction => {
+                    totalCount++;
+                    if (transaction.type === 'income') {
+                        totalIncome += transaction.amount;
+                    } else {
+                        totalExpense += transaction.amount;
+                    }
+                });
+
+                // Update summary display
+                const totalTransactionsEl = document.getElementById('totalTransactions');
+                const totalIncomeEl = document.getElementById('totalIncome');
+                const totalExpenseEl = document.getElementById('totalExpense');
+
+                if (totalTransactionsEl) {
+                    totalTransactionsEl.textContent = `${totalCount} giao dịch`;
+                }
+
+                if (totalIncomeEl) {
+                    totalIncomeEl.textContent = totalIncome > 0 ? `+${totalIncome.toLocaleString()}` : '+0';
+                }
+
+                if (totalExpenseEl) {
+                    totalExpenseEl.textContent = totalExpense > 0 ? `-${totalExpense.toLocaleString()}` : '-0';
+                }
+
+                console.log('📊 Transaction summary updated:', {
+                    total: totalCount,
+                    income: totalIncome.toLocaleString(),
+                    expense: totalExpense.toLocaleString()
+                });
+
+            } catch (error) {
+                console.error('Error updating transaction summary:', error);
+            }
+        }
+
+        // Initialize bank account features
+        document.addEventListener('DOMContentLoaded', async function() {
+            await createReceiptsBucket();
+            await testStorageBucket();
+            await loadTransactionsFromDB();
+            await loadPenalties();
+
+            // Force update balances multiple times to ensure sync
+            await forceUpdateAllBalances();
+
+            setTimeout(async () => {
+                await forceUpdateAllBalances();
+            }, 2000);
+
+            setTimeout(async () => {
+                await forceUpdateAllBalances();
+            }, 5000);
+
+            // Check fund breakdown for debugging
+            setTimeout(async () => {
+                await checkFundBreakdown();
+            }, 3000);
+
+            // Check setup status and hide buttons if complete
+            setTimeout(async () => {
+                await checkSetupComplete();
+            }, 2000); // Wait 2 seconds for all data to load
+        });
     </script>
 </body>
 </html>
